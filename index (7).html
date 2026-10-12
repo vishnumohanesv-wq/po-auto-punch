@@ -1,0 +1,2180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PO Punch Converter — Pro · Reliance + 1MG + FirstCry</title>
+<link rel="icon" id="favicon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23e5484d'/%3E%3Cpath d='M17 12h21l11 11v27a3 3 0 0 1-3 3H17a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3z' fill='%23fff'/%3E%3Cpath d='M38 12v11h11z' fill='%23000' opacity='.18'/%3E%3Cpath d='M21 33h22M21 41h14' stroke='%23e5484d' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="icon" id="favicon-png" type="image/png" sizes="64x64" href="">
+<meta name="theme-color" content="#0f1117">
+<style>
+    :root{
+    --bg:#05070d; --panel:#0d1220; --panel2:#121a2c; --border:#1f2b45;
+    --text:#eaf0ff; --muted:#7789ad; --accent:#39e6c8; --accent2:#7c5cff;
+    --warn:#ffc857; --danger:#ff5d7a; --onaccent:#03110d; --grid:rgba(57,230,200,.05);
+  }
+  :root[data-mode="1mg"]{ --accent:#ffb020; --onaccent:#1a1000; }
+  :root[data-mode="firstcry"]{ --accent:#4fb8ff; --onaccent:#041a1f; }
+  :root[data-mode="purplle"]{ --accent:#b388ff; --onaccent:#14002e; }
+  @media (prefers-color-scheme: light){
+    :root:not([data-theme="dark"]){
+      --bg:#f4f5f8; --panel:#ffffff; --panel2:#f0f2f7; --border:#e1e4ea;
+      --text:#171a23; --muted:#6b7280; --accent2:#059669;
+    }
+    :root[data-mode="1mg"]:not([data-theme="dark"]){ --accent:#b26a00; --onaccent:#fff; }
+    :root[data-mode="firstcry"]:not([data-theme="dark"]){ --accent:#0e7490; --onaccent:#fff; }
+    :root[data-mode="purplle"]:not([data-theme="dark"]){ --accent:#6d28d9; --onaccent:#fff; }
+  }
+  :root[data-theme="dark"]{ --bg:#0f1117; --panel:#171a23; --panel2:#1d212b; --border:#2a2f3b; --text:#e7e9ee; --muted:#8b93a7; --accent2:#00d4aa; }
+  :root[data-theme="dark"][data-mode="1mg"]{ --accent:#ffb020; --onaccent:#1a1000; }
+  :root[data-theme="dark"][data-mode="firstcry"]{ --accent:#4fb8ff; --onaccent:#041a1f; }
+  :root[data-theme="dark"][data-mode="purplle"]{ --accent:#b388ff; --onaccent:#14002e; }
+  :root[data-theme="light"]{ --bg:#f4f5f8; --panel:#ffffff; --panel2:#f0f2f7; --border:#e1e4ea; --text:#171a23; --muted:#6b7280; --accent2:#059669; }
+  :root[data-theme="light"][data-mode="1mg"]{ --accent:#b26a00; --onaccent:#fff; }
+  :root[data-theme="light"][data-mode="firstcry"]{ --accent:#0e7490; --onaccent:#fff; }
+  :root[data-theme="light"][data-mode="purplle"]{ --accent:#6d28d9; --onaccent:#fff; }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-padding-top:env(safe-area-inset-top,0px);}
+  body{
+    font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif; -webkit-font-smoothing:antialiased;
+    background:var(--bg); color:var(--text); min-height:100%;
+    padding:24px 16px calc(24px + env(safe-area-inset-bottom,0px));
+    padding-top:calc(24px + env(safe-area-inset-top,0px));
+  }
+  .wrap{max-width:1200px; margin:0 auto;}
+  .top{display:flex; justify-content:space-between; align-items:flex-start; gap:16px; margin-bottom:16px; flex-wrap:wrap;}
+  h1{font-size:22px; font-weight:700;}
+  .sub{color:var(--muted); font-size:13px; margin-top:4px;}
+  .theme-btn{background:var(--panel2); border:1.5px solid var(--border); color:var(--text); border-radius:20px; padding:6px 12px; font-size:12px; cursor:pointer;}
+
+  .modebar{display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; align-items:center;}
+  .modebtn{background:var(--panel); border:1.5px solid var(--border); color:var(--text); padding:10px 18px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer;}
+  .modebtn.active{background:var(--accent); border-color:var(--accent); color:var(--onaccent);}
+  .modehint{font-size:12px; color:var(--muted);}
+
+  .card{background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:18px; margin-bottom:16px;}
+  .card h2{font-size:14px; color:var(--accent); margin-bottom:10px; display:flex; align-items:center; gap:8px; justify-content:space-between; flex-wrap:wrap;}
+  .card h2 .h2-sub{font-size:11px; color:var(--muted); font-weight:400;}
+
+  textarea{
+    width:100%; min-height:140px; padding:12px; background:var(--panel2); color:var(--text);
+    border:1.5px solid var(--border); border-radius:8px; font-family:'JetBrains Mono',Consolas,'Courier New',monospace;
+    font-size:12px; resize:vertical;
+  }
+  textarea:focus{outline:none; border-color:var(--accent);}
+  input[type=text], input[type=number], select{
+    background:var(--panel2); color:var(--text); border:1.5px solid var(--border); border-radius:8px;
+    padding:8px 10px; font-size:12px; font-family:inherit;
+  }
+  input:focus, select:focus{outline:none; border-color:var(--accent);}
+
+  .row{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; align-items:center;}
+  button{border:none; border-radius:8px; padding:10px 16px; font-size:13px; font-weight:600; cursor:pointer; color:#04101a; transition:opacity .15s;}
+  button:hover{opacity:.85;} button:active{opacity:.65;}
+  .btn-main{background:var(--accent); color:var(--onaccent);}
+  .btn-ok{background:var(--accent2);}
+  .btn-warn{background:var(--warn);}
+  .btn-danger{background:var(--danger); color:#2a0505;}
+  .btn-ghost{background:transparent; color:var(--text); border:1.5px solid var(--border);}
+  .btn-sm{padding:6px 12px; font-size:12px;}
+
+  .totals{display:none; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px; margin-bottom:16px;}
+  .tcard{background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:10px 12px; text-align:center;}
+  .tcard .l{font-size:10px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted);}
+  .tcard .v{font-size:20px; font-weight:700; color:var(--accent2); margin-top:2px;}
+  .tcard.warn .v{color:var(--warn);} .tcard.danger .v{color:var(--danger);}
+
+  .refgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; margin-top:6px;}
+  .rcard{background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:10px 12px;}
+  .rcard .l{font-size:10px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted);}
+  .rcard .v{font-size:13px; font-weight:600; margin-top:3px; word-break:break-word; font-family:'JetBrains Mono',Consolas,monospace;}
+  .rcard.wide{grid-column:1/-1;}
+
+  table{width:100%; border-collapse:collapse; font-size:13px;}
+  thead th{text-align:left; padding:9px 10px; background:var(--panel2); color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.4px; border-bottom:1px solid var(--border); position:sticky; top:0; cursor:pointer; user-select:none; white-space:nowrap;}
+  thead th:hover{color:var(--accent);}
+  thead th .arrow{font-size:9px; opacity:.6;}
+  tbody td{padding:6px 10px; border-bottom:1px solid var(--border); white-space:nowrap;}
+  tbody tr:hover{background:var(--panel2);}
+  tbody tr.unmapped{background:rgba(255,183,77,0.08);}
+  tbody tr.dup{background:rgba(239,83,80,0.08);}
+  .sku{color:var(--accent); font-weight:700; font-family:'JetBrains Mono',Consolas,monospace;}
+  .code{color:var(--muted); font-family:'JetBrains Mono',Consolas,monospace; font-size:11px;}
+  .pname{max-width:260px; overflow:hidden; text-overflow:ellipsis; font-size:12px; color:var(--muted);}
+  .num{font-family:'JetBrains Mono',Consolas,monospace;}
+  .table-wrap{max-height:440px; overflow:auto; border:1px solid var(--border); border-radius:8px; margin-top:12px;}
+  tfoot td{padding:9px 10px; font-weight:700; background:var(--panel2); color:var(--accent2); position:sticky; bottom:0;}
+  .copy-line{padding:4px 8px; font-size:11px;}
+  .edit-input{width:70px; padding:4px 6px; font-size:12px;}
+  .flag{font-size:10px; padding:2px 6px; border-radius:10px; font-weight:700; margin-left:6px;}
+  .flag-warn{background:rgba(255,183,77,.15); color:var(--warn);}
+  .flag-via{background:var(--panel); color:var(--muted); border:1px solid var(--border);}
+  .flag-dup{background:rgba(239,83,80,.15); color:var(--danger);}
+  .del-btn{background:transparent; color:var(--danger); font-size:14px; padding:2px 8px; border:none;}
+
+  .copybox{background:var(--panel2); border:1px solid var(--border); border-radius:8px; padding:10px 12px; font-family:'JetBrains Mono',Consolas,monospace; font-size:12px; max-height:160px; overflow:auto; white-space:pre; margin-top:8px;}
+  .hint{color:var(--muted); font-size:12px; margin-top:6px; width:100%;}
+  .status-ok{color:var(--accent2);} .status-warn{color:var(--warn);}
+  .toast{position:fixed; bottom:calc(24px + env(safe-area-inset-bottom,0px)); left:50%; transform:translateX(-50%); background:var(--accent2); color:#04231a; padding:10px 20px; border-radius:8px; font-weight:700; font-size:13px; display:none; z-index:200; box-shadow:0 8px 24px rgba(0,0,0,.3);}
+
+  h1,h2{font-family:'Space Grotesk','Inter',system-ui,sans-serif; letter-spacing:.2px;}
+
+  .dk-kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:10px 0}
+  .dk-k{background:var(--panel2);border:1px solid var(--border);border-top:3px solid var(--c,var(--accent));border-radius:10px;padding:9px 11px}
+  .dk-k b{display:block;font:700 20px 'JetBrains Mono',monospace}.dk-k span{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+  .dk-pipe{display:flex;height:10px;border-radius:99px;overflow:hidden;background:var(--panel2);margin:4px 0 10px}
+  .dk-pipe i{display:block;height:100%}
+  #dkPaste{width:100%;background:var(--panel2);border:1.5px dashed var(--border);border-radius:10px;padding:10px;color:var(--text);font:500 12px 'JetBrains Mono',monospace;resize:vertical}
+  #dkPaste:focus{outline:none;border-color:var(--accent)}
+  .dk-st{font:700 10px 'Inter',sans-serif;border-radius:99px;padding:2px 8px;color:#fff;background:var(--c)}
+  .dk-in{background:var(--panel);border:1px solid var(--border);border-radius:7px;color:var(--text);padding:4px 6px;font:500 12px 'JetBrains Mono',monospace}
+  .dk-tags{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}.dk-tags label{font-size:10.5px;color:var(--muted)}
+
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  @keyframes flow{0%{background-position:0 50%}100%{background-position:200% 50%}}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(46,196,182,.5)}50%{box-shadow:0 0 0 6px rgba(46,196,182,0)}}
+  .card{animation:rise .5s ease both;backdrop-filter:blur(10px);transition:transform .2s,box-shadow .2s}
+  .card:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(0,0,0,.35)}
+  .hx-item,.dk-k{animation:rise .35s ease both}.dk-k:hover{transform:translateY(-3px)}
+  .appbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;padding:10px 18px;margin:0 0 14px;background:rgba(12,16,28,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+  .appbar::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:2px;background:linear-gradient(90deg,#4285f4,#ea4335,#fbbc04,#34a853,#4285f4);background-size:200% 100%;animation:flow 6s linear infinite}
+  .appbar .logo{font:700 18px 'Space Grotesk',sans-serif;letter-spacing:.3px}.appbar .logo b{background:linear-gradient(90deg,#4285f4,#a66cff);-webkit-background-clip:text;color:transparent}
+  .appbar .sp{flex:1}.appbar #abClock{font:600 12px 'JetBrains Mono',monospace;color:var(--muted)}
+  .chip{font:700 11px Inter,sans-serif;padding:5px 11px;border-radius:99px;border:1px solid var(--border);color:var(--muted)}
+  .chip.ok{color:#34a853;border-color:#34a853;animation:pulse 2.2s infinite}.chip.bad{color:#ea4335;border-color:#ea4335}
+  .gs-log{max-height:190px;overflow:auto;margin-top:6px}.gs-r{font-size:12px;padding:6px 9px;border-left:3px solid #34a853;background:var(--panel2);border-radius:6px;margin-bottom:4px}
+  .gs-r.bad{border-color:#ea4335}.gs-r span{color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:11px;margin-left:6px}
+  .hx-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  .hx-head h2{margin:0}.hx-actions{display:flex;gap:8px}
+  .hx-tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:12px 0 8px}
+  #hxSearch{flex:1;min-width:220px;background:var(--panel2);border:1.5px solid var(--border);border-radius:10px;padding:9px 12px;color:var(--text);font:500 13px 'Inter',sans-serif}
+  #hxSearch:focus{outline:none;border-color:var(--accent)}
+  .hx-tabs{display:flex;gap:6px;flex-wrap:wrap}
+  .hx-tab{cursor:pointer;border:1.5px solid var(--border);background:var(--panel2);color:var(--muted);border-radius:999px;padding:5px 12px;font:700 11px 'Inter',sans-serif;letter-spacing:.4px;text-transform:uppercase}
+  .hx-tab.on{background:var(--accent);color:var(--onaccent);border-color:var(--accent)}
+  .hx-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:8px 10px;background:var(--panel2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;font-size:12px}
+  .hx-bar label{display:flex;gap:6px;align-items:center;cursor:pointer;font-weight:600}
+  .hx-bar #hxCount{color:var(--muted);margin-right:auto;font-family:'JetBrains Mono',monospace;font-size:11px}
+  .hx-list{max-height:520px;overflow:auto;padding-right:2px}
+  .hx-item{display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--panel2);border:1px solid var(--border);border-left:4px solid var(--c,var(--accent));border-radius:10px;margin-bottom:6px;transition:transform .12s,border-color .12s}
+  .hx-item:hover{transform:translateX(2px);border-color:var(--accent)}
+  .hx-item.sel{background:color-mix(in srgb,var(--accent) 10%,var(--panel2))}
+  .hx-main{flex:1;min-width:0;cursor:pointer}
+  .hx-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .hx-po{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700}
+  .hx-date{color:var(--muted);font-size:11px}
+  .hx-sub{color:var(--muted);font-size:11px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hx-nums{text-align:right;display:flex;flex-direction:column;gap:2px}
+  .hx-nums b{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent2)}
+  .hx-nums span{font-size:10.5px;color:var(--muted)}
+  .hx-ib{background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text);cursor:pointer;padding:5px 8px;font-size:12px}
+  .hx-ib:hover{border-color:var(--accent)} .hx-ib.d:hover{border-color:#e5484d;color:#e5484d}
+  .hx-empty{padding:22px;text-align:center;color:var(--muted);font-size:12px}
+  .history-item{display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:var(--panel2); border:1px solid var(--border); border-radius:8px; margin-bottom:6px; gap:10px;}
+  .history-item .meta{cursor:pointer; flex:1; font-size:12px;}
+  .history-item .t{color:var(--muted);}
+  .tag{font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px; background:var(--panel); border:1px solid var(--border); margin-right:6px;}
+  .mapping-grid{display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:8px; align-items:center; margin-top:8px;}
+  .mapping-list{max-height:180px; overflow:auto; margin-top:10px;}
+  .mapping-row{display:flex; justify-content:space-between; align-items:center; padding:6px 8px; font-size:11px; font-family:'JetBrains Mono',Consolas,monospace; border-bottom:1px solid var(--border); gap:8px;}
+  .mapping-row span:first-child{flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  details summary{cursor:pointer; color:var(--accent); font-size:13px; font-weight:600;}
+  @media (max-width:640px){ .table-wrap{max-height:340px;} .mapping-grid{grid-template-columns:1fr;} }
+
+  /* ===== PRO THEME: motion, glass, dashboard ===== */
+  body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none;
+    background:radial-gradient(40% 40% at 18% 18%,color-mix(in srgb,var(--accent) 24%,transparent),transparent 70%),
+      radial-gradient(35% 35% at 82% 8%,rgba(124,92,255,.18),transparent 70%),
+      radial-gradient(40% 40% at 72% 92%,rgba(0,212,170,.15),transparent 70%);
+    animation:drift 18s ease-in-out infinite alternate;}
+  @keyframes drift{to{transform:translate3d(3%,2%,0) scale(1.08)}}
+  @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  @keyframes pop{0%{transform:scale(.9);opacity:0}100%{transform:none;opacity:1}}
+  h1{background:linear-gradient(90deg,var(--text) 30%,var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:-.3px}
+  .card{animation:rise .5s both;backdrop-filter:blur(8px);transition:box-shadow .25s,border-color .25s}
+  .card:hover{box-shadow:0 12px 34px rgba(0,0,0,.18);border-color:color-mix(in srgb,var(--accent) 40%,var(--border))}
+  .modebtn{transition:transform .15s,box-shadow .25s,background .25s}
+  .modebtn:hover{transform:translateY(-2px)}
+  .modebtn.active{box-shadow:0 8px 22px color-mix(in srgb,var(--accent) 45%,transparent)}
+  button{transition:transform .12s,opacity .15s,box-shadow .2s}
+  .btn-main:hover,.btn-ok:hover{transform:translateY(-1px);box-shadow:0 6px 16px color-mix(in srgb,var(--accent) 35%,transparent)}
+  #dropZone:hover{border-color:var(--accent)!important;background:color-mix(in srgb,var(--accent) 7%,transparent)}
+  .tcard{position:relative;overflow:hidden;animation:pop .5s both}
+  .tcard::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+  .tcard .v{font-size:24px;font-variant-numeric:tabular-nums}
+  tbody.anim tr{animation:rise .4s both;animation-delay:calc(var(--i,0)*30ms)}
+  .toast{animation:pop .25s both}
+  .dash{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:6px}
+  .panel{background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:14px}
+  .ptitle{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:10px}
+  .donut{width:100%;max-width:170px;display:block;margin:0 auto}
+  .donut .seg{transition:stroke-dasharray 1s cubic-bezier(.2,.8,.2,1),stroke-width .15s;cursor:pointer}
+  .donut .seg:hover{stroke-width:19}
+  .dl{font-size:8px;fill:var(--muted);letter-spacing:1px}.dv{font-size:15px;font-weight:700;fill:var(--text)}
+  .legend{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:10px;font-size:11px;color:var(--muted)}
+  .legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px}
+  .legend b{color:var(--text);margin-left:5px}
+  .brow{display:grid;grid-template-columns:64px 1fr 44px;gap:8px;align-items:center;margin:7px 0;font-size:12px}
+  .bl{font-family:'JetBrains Mono',Consolas,monospace;color:var(--muted)}
+  .btrack{height:10px;background:var(--panel);border-radius:8px;overflow:hidden}
+  .bfill{height:100%;border-radius:8px;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+  .bv{text-align:right;font-family:'JetBrains Mono',Consolas,monospace;font-weight:700}
+  .stat{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px dashed var(--border);font-size:12px}
+  .stat span{color:var(--muted)}.stat b{font-family:'JetBrains Mono',Consolas,monospace;text-align:right}
+  .ringwrap{display:flex;align-items:center;gap:12px;margin-bottom:8px;font-size:12px;color:var(--muted)}
+  .ringwrap b{display:block;font-size:20px;color:var(--text)}
+  .ring .arc{transition:stroke-dasharray 1.1s cubic-bezier(.2,.8,.2,1)}
+  .mini{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:12px}
+  .mini .tcard .v{font-size:18px}
+  .spark{width:100%;height:46px}
+  .chip{display:inline-block;font-size:10px;font-weight:700;padding:3px 9px;border-radius:12px;margin:6px 6px 0 0;color:#0b0b0b}
+  @media (prefers-reduced-motion:reduce){*,*::before{animation:none!important;transition:none!important}}
+
+  /* ===== NEO CONTROL-ROOM THEME ===== */
+  body{background-image:
+      linear-gradient(var(--grid) 1px,transparent 1px),
+      linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+    background-size:34px 34px;}
+  body::before{content:"";position:fixed;inset:-25%;z-index:-1;pointer-events:none;
+    background:radial-gradient(38% 38% at 15% 12%,color-mix(in srgb,var(--accent) 20%,transparent),transparent 70%),
+      radial-gradient(34% 34% at 88% 10%,color-mix(in srgb,var(--accent2) 18%,transparent),transparent 70%),
+      radial-gradient(40% 40% at 70% 95%,rgba(255,255,255,.04),transparent 70%);
+    animation:drift 20s ease-in-out infinite alternate;}
+  @keyframes drift{to{transform:translate3d(-3%,3%,0) scale(1.06)}}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @keyframes scan{0%{background-position-y:0}100%{background-position-y:34px}}
+  @keyframes blink{50%{opacity:.25}}
+  @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+  h1{font-family:'JetBrains Mono',Consolas,'Courier New',monospace; letter-spacing:.5px;
+    background:linear-gradient(90deg,var(--text),var(--accent)); -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .card{animation:rise .45s both; border-radius:14px; position:relative;}
+  .card::before{content:"";position:absolute;left:14px;right:14px;top:0;height:1px;
+    background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--accent) 60%,transparent),transparent);}
+  .card h2{font-family:'JetBrains Mono',Consolas,monospace;}
+  button{border-radius:6px; font-family:'Segoe UI',sans-serif;}
+  .btn-main{background:var(--accent); color:var(--onaccent); box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 50%,transparent);}
+  .btn-main:hover{box-shadow:0 0 18px color-mix(in srgb,var(--accent) 55%,transparent);}
+  .modebtn{border-radius:8px; font-family:'JetBrains Mono',Consolas,monospace;}
+  .modebtn.active{box-shadow:0 0 0 1px var(--accent),0 0 20px color-mix(in srgb,var(--accent) 45%,transparent);}
+  .tcard{border-radius:10px; position:relative; overflow:hidden;}
+  .tcard::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,color-mix(in srgb,var(--accent) 14%,transparent) 45%,transparent 60%);
+    background-size:220% 100%; animation:shimmer 4.5s linear infinite;}
+  .tcard .v{font-family:'JetBrains Mono',Consolas,monospace; font-variant-numeric:tabular-nums;}
+  .liveclock{display:flex; align-items:center; gap:8px; font-family:'JetBrains Mono',Consolas,monospace; font-size:13px; color:var(--muted);
+    background:var(--panel2); border:1px solid var(--border); border-radius:20px; padding:7px 14px;}
+  .liveclock .dot{width:8px; height:8px; border-radius:50%; background:var(--accent); box-shadow:0 0 8px var(--accent); animation:blink 1.4s ease-in-out infinite;}
+  .liveclock b{color:var(--text); font-size:14px;}
+  .pdfpreview{margin-top:12px; border:1px solid var(--border); border-radius:10px; overflow:hidden; height:0; transition:height .35s ease;}
+  .pdfpreview.open{height:520px;}
+  .pdfpreview iframe{width:100%; height:100%; border:0; background:#fff;}
+  .skel{height:14px; border-radius:6px; background:linear-gradient(90deg,var(--panel2) 25%,var(--border) 50%,var(--panel2) 75%);
+    background-size:200% 100%; animation:shimmer 1.3s linear infinite; margin:6px 0;}
+  .tabbar{display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap;}
+  .tabbtn{background:var(--panel); border:1px solid var(--border); color:var(--muted); padding:8px 16px; border-radius:8px 8px 0 0; font-size:12px; font-weight:700; cursor:pointer; font-family:'JetBrains Mono',Consolas,monospace;}
+  .tabbtn.active{color:var(--accent); border-color:var(--accent); background:var(--panel2);}
+  .sheetbar{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:10px;}
+  .sheetstat{font-size:11px; color:var(--muted); font-family:'JetBrains Mono',Consolas,monospace;}
+
+  /* ===== Pro polish + Record Book ===== */
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+  @keyframes growBar{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+  @keyframes pulseRing{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 55%,transparent)}100%{box-shadow:0 0 0 12px transparent}}
+  button{transition:transform .12s,box-shadow .2s,filter .2s} button:active{transform:scale(.96)}
+  .rcard{transition:transform .18s,border-color .18s,box-shadow .18s} .rcard.copyable{cursor:pointer}
+  .rcard:hover{transform:translateY(-3px);border-color:var(--accent);box-shadow:0 8px 20px color-mix(in srgb,var(--accent) 22%,transparent)}
+  @media (prefers-reduced-motion:no-preference){
+    .rcard{animation:fadeUp .5s both;animation-delay:calc(var(--k,0)*70ms)}
+    .bk-entry{animation:fadeUp .4s both;animation-delay:calc(var(--i,0)*35ms)}
+    .bk-bar i{animation:growBar .7s cubic-bezier(.2,.8,.2,1) both;transform-origin:bottom;animation-delay:calc(var(--i,0)*40ms)}
+    .bk-kpi{animation:fadeUp .5s both;animation-delay:calc(var(--i,0)*80ms)}
+    .chip.on{animation:pulseRing .8s}
+  }
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+  .chip{background:var(--panel2);border:1px solid var(--border);color:var(--muted);padding:6px 13px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+  .chip:hover{border-color:var(--accent);color:var(--text)} .chip.on{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}
+  .rb-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:12px 0}
+  .bk-kpi{background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;position:relative;overflow:hidden;transition:transform .18s,border-color .18s}
+  .bk-kpi:hover{transform:translateY(-3px);border-color:var(--accent)}
+  .bk-kpi:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
+  .bk-kpi .l{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)} .bk-kpi .v{font-size:22px;font-weight:800;margin-top:2px;color:var(--text)}
+  .bk-chart{display:flex;align-items:flex-end;gap:6px;height:130px;padding:8px 4px 0;background:var(--panel2);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow-x:auto}
+  .bk-bar{flex:1;min-width:30px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;cursor:pointer;position:relative}
+  .bk-bar i{display:block;width:70%;min-height:3px;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--accent),color-mix(in srgb,var(--accent) 35%,transparent));transition:filter .15s}
+  .bk-bar:hover i{filter:brightness(1.3)} .bk-bar.out i{opacity:.28} .bk-bar.sel i{outline:2px solid var(--text)}
+  .bk-bar b{font-size:10px;color:var(--text);margin-bottom:2px} .bk-bar span{font-size:9px;color:var(--muted);padding:3px 0;white-space:nowrap}
+  .bk-day{margin-bottom:10px;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  .bk-dayhead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 14px;background:var(--panel2);cursor:pointer;font-weight:700;font-size:13px}
+  .bk-dayhead small{color:var(--muted);font-weight:600}
+  .bk-entry{display:grid;grid-template-columns:62px 92px 1fr 70px 70px 110px 28px;gap:8px;align-items:center;padding:8px 14px;border-top:1px solid var(--border);font-size:12px}
+  .bk-entry:hover{background:var(--panel2)}
+  .bk-pill{padding:2px 9px;border-radius:999px;font-size:10px;font-weight:800;color:#fff;text-align:center}
+  .bk-empty{padding:26px;text-align:center;color:var(--muted)}
+  @media(max-width:640px){.bk-entry{grid-template-columns:50px 1fr 60px 90px 24px}.bk-entry .hide-sm{display:none}}
+
+  /* ===== TOP-CLASS DESIGN LAYER ===== */
+  :root,:root[data-theme="dark"]{--bg:#060912;--panel:#0d1324;--panel2:#131b30;--border:#1f2a46;--text:#eaf0ff;--muted:#8794b8;--accent2:#7c8cff;--grid:rgba(124,140,255,.045)}
+  body{font-size:14px;letter-spacing:-.005em;line-height:1.5}
+  .wrap{max-width:1240px}
+  .top{position:relative;padding:26px 28px;margin-bottom:18px;border-radius:20px;border:1px solid var(--border);overflow:hidden;
+    background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 16%,var(--panel)),var(--panel) 55%,color-mix(in srgb,var(--accent2) 14%,var(--panel)))}
+  .top::before{content:"";position:absolute;width:340px;height:340px;right:-90px;top:-170px;border-radius:50%;
+    background:conic-gradient(from 0deg,#4285f4,#ea4335,#fbbc04,#34a853,#4285f4);filter:blur(70px);opacity:.28;animation:spin 16s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .top>*{position:relative}
+  h1{font:700 32px/1.1 'Space Grotesk','Inter',sans-serif;letter-spacing:-.8px}
+  .sub{font-size:13px;max-width:640px;margin-top:8px}
+  .appbar{background:rgba(6,9,18,.78);border-bottom:1px solid var(--border)}
+  .appbar .logo::before{content:"";display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:9px;vertical-align:-1px;
+    background:conic-gradient(#4285f4 0 25%,#ea4335 0 50%,#fbbc04 0 75%,#34a853 0);box-shadow:0 0 14px rgba(66,133,244,.55)}
+  .modebar{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:6px;gap:4px}
+  .modebtn{border:0;background:transparent;color:var(--muted);padding:10px 16px;border-radius:10px}
+  .modebtn:hover{color:var(--text);background:var(--panel2)}
+  .modebtn.active{background:var(--accent);color:var(--onaccent);box-shadow:0 6px 22px color-mix(in srgb,var(--accent) 40%,transparent)}
+  .tabbar{gap:4px;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:5px;width:max-content;max-width:100%}
+  .tabbtn{border:0;border-radius:10px;padding:9px 18px;background:transparent}
+  .tabbtn.active{background:var(--panel2);color:var(--text);box-shadow:inset 0 -2px 0 var(--accent)}
+  .card{border-radius:18px;padding:22px;background:color-mix(in srgb,var(--panel) 88%,transparent);border:1px solid var(--border);box-shadow:0 1px 0 rgba(255,255,255,.04) inset,0 18px 40px -22px rgba(0,0,0,.6)}
+  .card h2{font-size:15px;font-weight:700;letter-spacing:.1px;color:var(--text);padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:14px}
+  .card h2 .h2-sub{color:var(--muted);font-weight:500}
+  button{border-radius:10px;padding:10px 16px;font-weight:600;letter-spacing:.1px}
+  .btn-main{background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 55%,var(--accent2)));box-shadow:0 8px 20px -8px color-mix(in srgb,var(--accent) 70%,transparent)}
+  .btn-ok{background:linear-gradient(135deg,#34a853,#1e8e3e);color:#fff}
+  .btn-warn{background:linear-gradient(135deg,#fbbc04,#f29900);color:#1c1300}
+  .btn-danger{background:linear-gradient(135deg,#ff6b81,#ea4335);color:#fff}
+  .btn-ghost{background:rgba(255,255,255,.03);color:var(--text);border:1px solid var(--border)}
+  .btn-ghost:hover{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent)}
+  button:hover{opacity:1;filter:brightness(1.1)}
+  button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  input[type=text],input[type=number],input[type=search],input[type=password],select,textarea{border-radius:10px;background:var(--panel2);border:1px solid var(--border);padding:10px 12px;transition:border-color .2s,box-shadow .2s}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 16%,transparent)}
+  #dropZone{border:2px dashed color-mix(in srgb,var(--accent) 45%,var(--border))!important;border-radius:16px!important;padding:34px!important;font-size:15px;font-weight:600;
+    background:radial-gradient(60% 120% at 50% 0%,color-mix(in srgb,var(--accent) 10%,transparent),transparent)}
+  .tcard,.dk-k,.bk-kpi,.rcard,.panel{border-radius:14px;border:1px solid var(--border);background:linear-gradient(180deg,var(--panel2),var(--panel))}
+  .tcard .v,.dk-k b{font-family:'Space Grotesk','JetBrains Mono',monospace;letter-spacing:-.5px}
+  .table-wrap{border-radius:14px;border:1px solid var(--border)}
+  thead th{background:color-mix(in srgb,var(--panel2) 92%,transparent);backdrop-filter:blur(8px);font-size:10.5px;letter-spacing:.8px;color:var(--muted);padding:11px 12px}
+  tbody td{padding:9px 12px}
+  tbody tr:nth-child(even){background:rgba(255,255,255,.018)}
+  tbody tr:hover{background:color-mix(in srgb,var(--accent) 7%,transparent)}
+  .sku{color:var(--accent);letter-spacing:.2px}
+  .hx-item{border-radius:12px;background:linear-gradient(90deg,var(--panel2),var(--panel))}
+  .hx-item:hover{box-shadow:0 10px 24px -14px color-mix(in srgb,var(--accent) 60%,transparent)}
+  .hx-tab,.chip{padding:6px 14px}
+  .dk-st{letter-spacing:.3px;padding:3px 10px}
+  .toast{border-radius:12px;padding:12px 22px;box-shadow:0 14px 34px rgba(0,0,0,.45)}
+  ::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;border:2px solid var(--panel)}
+  ::selection{background:color-mix(in srgb,var(--accent) 35%,transparent)}
+  @media(max-width:640px){h1{font-size:24px}.top{padding:18px}.card{padding:16px}}
+
+  /* ===== WOW layer 2 ===== */
+  #rowCard .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+  #rowCard .row label{font:700 10px Inter,sans-serif;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}
+  #rowCard .row input{width:100%!important;margin-top:5px;font:600 13px 'JetBrains Mono',monospace;letter-spacing:0;text-transform:none;color:var(--text)}
+  #rowCard .row label:nth-child(6){grid-column:span 2}
+  #rowCard{border-color:color-mix(in srgb,var(--accent) 35%,var(--border))}
+  .wa{margin:8px 0 0;max-width:560px;position:relative;white-space:pre-wrap;word-break:break-word;font:500 13.5px/1.55 Inter,sans-serif;color:#e9fff7;
+    background:linear-gradient(160deg,#0b6e5a,#005c4b);border-radius:16px 16px 16px 4px;padding:14px 16px;box-shadow:0 14px 30px -14px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.12);animation:pop .3s both}
+  .wa::before{content:"";position:absolute;left:-7px;bottom:0;border:8px solid transparent;border-right-color:#0b6e5a;border-bottom-color:#0b6e5a}
+  .dk-steps{display:flex;gap:5px;margin-top:7px}.dk-steps i{width:34px;height:5px;border-radius:9px;background:var(--border);transition:background .4s}
+  .dk-steps i.on{background:linear-gradient(90deg,#4285f4,#34a853);box-shadow:0 0 10px rgba(52,168,83,.5)}
+  .dk-tags .dk-in{min-width:250px;width:100%}.dk-tags label{flex:1;min-width:250px}
+  .hx-bar{border-radius:14px;padding:10px 12px;background:linear-gradient(180deg,var(--panel2),var(--panel))}
+  .hx-item.sel{box-shadow:0 0 0 1px var(--accent),0 12px 28px -16px var(--accent)}
+  .dk-kpi{gap:12px}.dk-k{padding:14px 16px;position:relative;overflow:hidden}
+  .dk-k::after{content:"";position:absolute;right:-18px;top:-18px;width:64px;height:64px;border-radius:50%;background:var(--c);opacity:.14;filter:blur(8px)}
+  .dk-k b{font-size:26px}.dk-pipe{height:12px;box-shadow:inset 0 0 0 1px var(--border)}
+  .dk-pipe i{transition:width .8s cubic-bezier(.2,.8,.2,1)}
+  .card h2{position:relative}.card h2::before{content:"";width:4px;height:16px;border-radius:4px;background:linear-gradient(180deg,#4285f4,#34a853);margin-right:2px}
+  .card>h2{justify-content:flex-start;gap:10px}.card>h2 button,.card>h2>span:last-child{margin-left:auto}
+  @media (hover:hover){.card{transition:transform .25s,box-shadow .25s,border-color .25s}}
+
+  /* ===== INTERACTIVE SKINS + FX ===== */
+  #boot{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;animation:bootOut .7s 1s forwards;pointer-events:none}
+  #boot .bl{font:700 34px 'Space Grotesk',sans-serif;animation:pop .6s both}#boot .bl b{background:linear-gradient(90deg,#4285f4,#ea4335,#fbbc04,#34a853);-webkit-background-clip:text;color:transparent}
+  #boot i{width:180px;height:3px;border-radius:9px;background:linear-gradient(90deg,#4285f4,#ea4335,#fbbc04,#34a853,#4285f4);background-size:200% 100%;animation:flow 1s linear infinite}
+  @keyframes bootOut{to{opacity:0;visibility:hidden}}
+  #fx{position:fixed;inset:0;width:100%;height:100%;z-index:998;pointer-events:none}
+  .card{--mx:50%;--my:0%}
+  .card::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .3s;background:radial-gradient(360px circle at var(--mx) var(--my),color-mix(in srgb,var(--accent) 16%,transparent),transparent 62%)}
+  .card:hover::after{opacity:1}
+  .dk-k,.tcard,.bk-kpi{transform-style:preserve-3d;transition:transform .15s ease-out,box-shadow .2s;will-change:transform}
+  button{position:relative;overflow:hidden}
+  .rip{position:absolute;border-radius:50%;background:rgba(255,255,255,.45);transform:scale(0);animation:ripple .6s ease-out forwards;pointer-events:none}
+  @keyframes ripple{to{transform:scale(3.2);opacity:0}}
+  /* NEON */
+  :root[data-skin="neon"]{--bg:#02030a;--panel:#070a18;--panel2:#0c1124;--border:#18285a;--text:#d9f4ff;--muted:#6f86b8;--accent2:#ff2bd6;--grid:rgba(0,255,225,.08)}
+  [data-skin="neon"] body{font-family:'JetBrains Mono',Consolas,monospace;font-size:13px}
+  [data-skin="neon"] h1,[data-skin="neon"] h2{font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:1.5px}
+  [data-skin="neon"] .card,[data-skin="neon"] .top,[data-skin="neon"] .modebar,[data-skin="neon"] .tabbar,[data-skin="neon"] button,[data-skin="neon"] input,[data-skin="neon"] select,[data-skin="neon"] textarea,[data-skin="neon"] .hx-item,[data-skin="neon"] .tcard,[data-skin="neon"] .dk-k,[data-skin="neon"] .table-wrap{border-radius:3px!important}
+  [data-skin="neon"] .card{border-color:color-mix(in srgb,var(--accent) 45%,var(--border));box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 12%,transparent),0 0 30px -10px var(--accent)}
+  [data-skin="neon"] .btn-main,[data-skin="neon"] .btn-ok{box-shadow:0 0 16px -2px var(--accent)}
+  [data-skin="neon"] body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:900;opacity:.07;background:repeating-linear-gradient(0deg,#fff 0 1px,transparent 1px 3px)}
+  /* SUNSET */
+  :root[data-skin="sunset"]{--bg:#150a1d;--panel:#211033;--panel2:#2c1745;--border:#4d2c68;--text:#fff1ec;--muted:#c9a0bd;--accent2:#ff8a5c;--grid:rgba(255,138,92,.05)}
+  [data-skin="sunset"] body{font-family:'Outfit','Inter',sans-serif;font-size:15px}
+  [data-skin="sunset"] h1,[data-skin="sunset"] h2{font-family:'Outfit',sans-serif}
+  [data-skin="sunset"] body::before{background:radial-gradient(45% 45% at 15% 10%,rgba(255,94,98,.30),transparent 70%),radial-gradient(40% 40% at 90% 15%,rgba(255,170,64,.22),transparent 70%),radial-gradient(45% 45% at 60% 100%,rgba(160,80,255,.22),transparent 70%)}
+  [data-skin="sunset"] .card,[data-skin="sunset"] .top{border-radius:26px}[data-skin="sunset"] button,[data-skin="sunset"] .modebtn,[data-skin="sunset"] .tabbtn{border-radius:999px}
+  [data-skin="sunset"] .btn-main{background:linear-gradient(135deg,#ff5e62,#ff9966);color:#2a0a12}
+  /* PAPER (light, editorial) */
+  :root[data-skin="paper"]{--bg:#f6f1e7;--panel:#fffdf8;--panel2:#f2ecde;--border:#e2d9c4;--text:#2a2418;--muted:#8a7f66;--accent2:#c2410c;--onaccent:#fff;--grid:rgba(120,90,30,.05);--accent:#0f766e}
+  :root[data-skin="paper"][data-mode="1mg"]{--accent:#b45309}:root[data-skin="paper"][data-mode="firstcry"]{--accent:#0369a1}:root[data-skin="paper"][data-mode="purplle"]{--accent:#7e22ce}
+  [data-skin="paper"] h1,[data-skin="paper"] h2,[data-skin="paper"] .appbar .logo,[data-skin="paper"] .tcard .v,[data-skin="paper"] .dk-k b{font-family:'Fraunces',Georgia,serif}
+  [data-skin="paper"] .appbar{background:rgba(246,241,231,.88)}
+  [data-skin="paper"] .card,[data-skin="paper"] .top{box-shadow:0 10px 30px -18px rgba(90,60,10,.35)}
+  [data-skin="paper"] h1{background:none;-webkit-text-fill-color:var(--text);color:var(--text)}
+  [data-skin="paper"] .top::before{opacity:.16}
+  [data-skin="paper"] .btn-ghost{background:#fff}[data-skin="paper"] thead th{background:var(--panel2)}
+  [data-skin="paper"] tbody tr:nth-child(even){background:rgba(120,90,30,.04)}
+  [data-skin="paper"] .dk-st,[data-skin="paper"] .btn-danger,[data-skin="paper"] .btn-ok{color:#fff}
+
+  /* ===== PREMIUM 3 ===== */
+  #sp{position:fixed;top:0;left:0;height:3px;width:0;z-index:1000;background:linear-gradient(90deg,#4285f4,#ea4335,#fbbc04,#34a853);box-shadow:0 0 12px rgba(66,133,244,.7)}
+  button{translate:var(--bx,0) var(--by,0);transition:translate .18s ease-out,transform .12s,filter .2s,box-shadow .2s}
+  @keyframes lateGlow{0%,100%{box-shadow:0 0 0 0 rgba(234,67,53,.45)}50%{box-shadow:0 0 0 7px rgba(234,67,53,0)}}
+  .hx-item.late{border-color:#ea4335;animation:lateGlow 1.8s infinite}
+  .hx-item.late .hx-date{color:#ff8a80}
+  .hx-item,.dk-k,.tcard{animation-fill-mode:both}
+  #cmdk{position:fixed;inset:0;z-index:1001;display:none;align-items:flex-start;justify-content:center;padding-top:14vh;background:rgba(3,6,14,.6);backdrop-filter:blur(8px)}
+  #cmdk.on{display:flex;animation:pop .18s both}
+  #cmdk .cbox{width:min(620px,92vw);background:var(--panel);border:1px solid var(--accent);border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 40px -8px var(--accent);overflow:hidden}
+  #cmdIn{width:100%;border:0!important;border-bottom:1px solid var(--border)!important;border-radius:0!important;padding:18px 20px!important;font:600 16px 'Space Grotesk',Inter,sans-serif!important;background:transparent!important;box-shadow:none!important}
+  #cmdList{max-height:340px;overflow:auto;padding:6px}
+  .ci{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:10px;cursor:pointer;font-weight:600;font-size:13.5px}
+  .ci.on,.ci:hover{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--text)}.ci span{margin-left:auto;color:var(--muted);font:500 11px 'JetBrains Mono',monospace}
+  .chint{padding:9px 16px;font-size:11px;color:var(--muted);border-top:1px solid var(--border)}
+
+  /* ===== APP-SHELL LAYOUT (sidebar) ===== */
+  body{padding-left:calc(284px + env(safe-area-inset-left))}
+  #side{position:fixed;left:14px;top:14px;bottom:14px;width:252px;z-index:60;display:flex;flex-direction:column;padding:20px 14px 14px;border-radius:24px;border:1px solid var(--border);
+    background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 12%,var(--panel)),var(--panel) 38%,var(--panel2));box-shadow:0 30px 70px -30px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.06);animation:rise .6s both}
+  .slogo{display:flex;align-items:center;gap:12px;padding:4px 10px 22px;font:700 17px 'Space Grotesk',sans-serif;line-height:1.1}
+  .slogo i{width:34px;height:34px;border-radius:11px;background:conic-gradient(from 200deg,#4285f4,#ea4335,#fbbc04,#34a853,#4285f4);box-shadow:0 0 24px rgba(66,133,244,.55);animation:spin 10s linear infinite}
+  .slogo span{display:flex;flex-direction:column}.slogo b{font-size:12px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted)}
+  #side nav{position:relative;display:flex;flex-direction:column;gap:4px;flex:1}
+  #ink{position:absolute;left:0;right:0;top:0;height:46px;border-radius:14px;border-left:3px solid var(--accent);z-index:0;
+    background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 26%,transparent),transparent 90%);transition:transform .38s cubic-bezier(.2,.9,.2,1),height .3s}
+  #side nav button{position:relative;z-index:1;display:flex;align-items:center;gap:13px;width:100%;text-align:left;background:transparent;border:0;color:var(--muted);padding:12px 14px;border-radius:14px;font:600 13.5px Inter,sans-serif;box-shadow:none;transition:color .2s,transform .2s}
+  #side nav button em{font-style:normal;font-size:18px;width:24px;text-align:center;transition:transform .25s}
+  #side nav button:hover{color:var(--text);transform:translateX(3px);filter:none}#side nav button:hover em{transform:scale(1.25) rotate(-6deg)}
+  #side nav button.on{color:var(--text)}
+  #side nav q{margin-left:auto;quotes:none;min-width:22px;text-align:center;font:700 11px 'JetBrains Mono',monospace;padding:2px 7px;border-radius:99px;background:var(--panel2);border:1px solid var(--border);color:var(--accent)}
+  .sfoot{border-top:1px solid var(--border);padding-top:14px}
+  #sbClock{font:600 11px 'JetBrains Mono',monospace;color:var(--muted);text-align:center;margin-bottom:10px;line-height:1.6}
+  .srow{display:flex;gap:6px}.srow button{flex:1;padding:9px 6px;font-size:11.5px;background:var(--panel2);color:var(--text);border:1px solid var(--border)}
+  .tabbar,.appbar .logo{display:none!important}
+  /* nav-driven views */
+  body[data-nav="desk"] #viewConvert>:not(#dkCard){display:none!important}
+  body[data-nav="history"] #viewConvert>:not(#historyCard){display:none!important}
+  body[data-nav="settings"] #viewConvert>:not(#gsBox):not([data-sec="settings"]){display:none!important}
+  body[data-nav="convert"] #dkCard,body[data-nav="convert"] #gsBox,body[data-nav="convert"] #historyCard,body[data-nav="convert"] [data-sec="settings"]{display:none!important}
+  @media(max-width:900px){
+    body{padding-left:14px;padding-bottom:92px}
+    #side{top:auto;left:8px;right:8px;bottom:8px;width:auto;height:66px;flex-direction:row;padding:6px;border-radius:20px}
+    .slogo,.sfoot,#ink{display:none}#side nav{flex-direction:row;gap:2px;justify-content:space-around}
+    #side nav button{flex-direction:column;gap:2px;padding:6px 2px;font-size:9.5px;justify-content:center;align-items:center}#side nav button span{display:block}
+    #side nav button.on{background:color-mix(in srgb,var(--accent) 18%,transparent)}#side nav q{position:absolute;top:2px;right:6px;margin:0;font-size:9px;padding:0 5px;min-width:0}
+  }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@500;700&family=Outfit:wght@400;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div id="boot"><div class="bl">TUCO <b>PO Punch Pro</b></div><i></i></div><canvas id="fx"></canvas><div id="sp"></div>
+<aside id="side"><div class="slogo"><i></i><span>TUCO<b>PO Punch</b></span></div>
+  <nav><u id="ink"></u>
+    <button data-n="convert" onclick="navTo('convert')"><em>🧮</em><span>Convert</span></button>
+    <button data-n="desk" onclick="navTo('desk')"><em>🚚</em><span>Dispatch Desk</span><q id="nbDesk">0</q></button>
+    <button data-n="history" onclick="navTo('history')"><em>🕑</em><span>History</span><q id="nbHist">0</q></button>
+    <button data-n="sheet" onclick="navTo('sheet')"><em>📑</em><span>Master Sheet</span></button>
+    <button data-n="book" onclick="navTo('book')"><em>📒</em><span>Record Book</span></button>
+    <button data-n="settings" onclick="navTo('settings')"><em>⚙️</em><span>Sheet &amp; Mapping</span></button>
+  </nav>
+  <div class="sfoot"><div id="sbClock"></div><div class="srow"><button onclick="cmdOpen()">⌘K Search</button><button onclick="skinNext()">🎨 Style</button></div></div>
+</aside>
+<div id="cmdk" onclick="if(event.target===this)cmdClose()"><div class="cbox"><input id="cmdIn" placeholder="⌘K — type a command… (upload, packing, label, update, csv, style)" autocomplete="off"><div id="cmdList"></div><div class="chint">↑↓ move · Enter run · Esc close</div></div></div>
+<div class="appbar"><div class="logo">TUCO <b>PO Punch Pro</b></div><div class="sp"></div><button class="chip" onclick="cmdOpen()" title="Command palette (Ctrl+K)" style="cursor:pointer">⌘K</button><button class="chip" id="skinBtn" onclick="skinNext()" title="Change look" style="cursor:pointer">🎨 Style</button><span class="chip" id="gsChip">● Sheet not connected</span><div id="abClock"></div></div>
+
+<div class="wrap">
+
+  <div class="top">
+    <div>
+      <h1>PO Control <span style="color:var(--accent)">Room</span></h1>
+      <div class="sub" id="subLine"></div>
+    </div>
+    <div class="top-actions" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <div class="liveclock"><span class="dot"></span><span id="clockDate">—</span><b id="clockTime">--:--:--</b></div>
+      <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙 Theme</button>
+    </div>
+  </div>
+
+  <div class="tabbar">
+    <button class="tabbtn active" id="tab-convert" onclick="showTab('convert')">🧮 Convert</button>
+    <button class="tabbtn" id="tab-sheet" onclick="showTab('sheet')">📑 Master Sheet</button>
+    <button class="tabbtn" id="tab-book" onclick="showTab('book')">📒 Record Book</button>
+  </div>
+
+  <div id="viewConvert">
+  <div class="modebar">
+    <button class="modebtn" id="mb-reliance" onclick="setMode('reliance')">🔴 Reliance Retail</button>
+    <button class="modebtn" id="mb-1mg" onclick="setMode('1mg')">🟡 Tata 1MG</button>
+    <button class="modebtn" id="mb-firstcry" onclick="setMode('firstcry')">🔵 FirstCry</button>
+    <button class="modebtn" id="mb-purplle" onclick="setMode('purplle')">🟣 Purplle</button>
+    <span class="modehint">Upload a PDF and the buyer is <b>auto-detected</b> — or pick it manually.</span>
+  </div>
+
+  <div class="card" id="dkCard">
+    <div class="hx-head"><h2>🚚 Dispatch Desk <span class="h2-sub">punch → pack → label · live</span></h2><div id="dkClock" style="font:600 13px 'JetBrains Mono',monospace;text-align:right"></div></div>
+    <div id="dkKpi" class="dk-kpi"></div><div id="dkPipe" class="dk-pipe"></div>
+    <textarea id="dkPaste" rows="2" placeholder="➕ Add POs: paste text / sheet rows here, or press Ctrl+V with a screenshot (auto-reads PO numbers). Punched POs are added automatically."></textarea>
+    <div id="dkMsg" class="hint" style="margin:4px 0"></div>
+    <div class="hx-tools"><div class="hx-tabs" id="dkTabs"></div></div>
+    <div class="hx-bar">
+      <label><input type="checkbox" id="dkAll" onchange="dkSelAll(this.checked)"> Select all shown</label><span id="dkCount"></span>
+      <button class="btn-ok btn-sm" onclick="dkPackMsg()">📦 Packing message</button>
+      <button class="btn-ok btn-sm" onclick="dkLabelMsg()">🏷 Label message</button>
+      <button class="btn-ghost btn-sm" onclick="dkSheetRows()">📋 Label-sheet rows</button>
+      <button class="btn-main btn-sm" onclick="dkUpdate()">🔄 Update Master</button>
+      <button class="btn-ghost btn-sm" onclick="dkDone()">✔ Mark done</button>
+      <button class="btn-danger btn-sm" onclick="dkDel()">🗑 Remove</button>
+    </div>
+    <div class="dk-tags" id="dkTags"></div>
+    <div id="dkList" class="hx-list"></div>
+  </div>
+  <div class="card">
+    <h2>1 · Upload the PO PDF <span class="h2-sub">easiest — no copy-paste needed</span></h2>
+    <div id="dropZone" style="border:2px dashed var(--border); border-radius:10px; padding:22px; text-align:center; cursor:pointer; transition:border-color .15s;">
+      <div id="dropLabel">📄 Click to choose a PDF, or drag one here</div>
+      <input type="file" id="pdfInput" accept="application/pdf" multiple style="display:none;">
+    </div>
+    <div class="row" id="resetBar" style="margin-top:8px;">
+      <button class="btn-ghost btn-sm" onclick="resetScreen()" title="Clear the PDF, pasted text and everything on screen">↺ Reset screen</button>
+      <button class="btn-danger btn-sm" onclick="deleteAllPdfs()" title="Remove the PDF and every loaded/uploaded PO">🗑 Delete all PDFs &amp; POs</button>
+    </div>
+    <div class="row" id="pdfActions" style="display:none;">
+      <button class="btn-ghost btn-sm" onclick="togglePreview()" id="previewBtn">👁 View PDF</button>
+      <button class="btn-danger btn-sm" onclick="removePdf()">✕ Remove PDF / upload another</button>
+    </div>
+    <div class="hint" id="pdfStatus"></div>
+    <div class="pdfpreview" id="pdfPreview"><iframe id="pdfFrame"></iframe></div>
+  </div>
+
+  <div class="card">
+    <h2>1b · …or paste PO data instead</h2>
+    <textarea id="input"></textarea>
+    <div class="row">
+      <button class="btn-main" onclick="convert()">⚡ Convert</button>
+      <label style="font-size:12px; display:flex; align-items:center; gap:6px; color:var(--muted);">
+        Price source: <select id="priceSource" onchange="onPriceSourceChange()"></select>
+      </label>
+      <label style="font-size:12px; display:flex; align-items:center; gap:6px; color:var(--muted);">
+        <input type="checkbox" id="mergeDupes" checked> Merge duplicate SKUs (sum qty)
+      </label>
+      <button class="btn-ghost btn-sm" onclick="clearAll()">Clear input</button>
+    </div>
+  </div>
+
+  <div class="card" id="refCard" style="display:none;">
+    <h2>📍 PO reference &amp; identification <span class="h2-sub" id="refTag"></span><button class="btn-ghost btn-sm" id="refMore" onclick="toggleRefMore()">▾ More details</button></h2>
+    <div class="refgrid" id="refGrid"></div>
+    <div class="hint">Pulled automatically from the PDF text — verify against the PDF before using for compliance/records, since PDF layout can occasionally shift a field.</div>
+  </div>
+
+  <details class="card" data-sec="settings">
+    <summary id="mapSummary">⚙ Mapping table</summary>
+    <div class="mapping-grid">
+      <input type="text" id="mapCode">
+      <input type="text" id="mapSku" placeholder="Easyecom / Tuco SKU (e.g. 65220)">
+      <input type="text" id="mapName" placeholder="Product name (optional)">
+      <button class="btn-ok btn-sm" onclick="addMapping()">+ Add</button>
+    </div>
+    <div class="hint">Custom mappings are saved on this device (separately for each buyer) and reused on every future PO.</div>
+    <div class="mapping-list" id="mappingList"></div>
+  </details>
+
+  <div class="card" id="loCard" style="display:none;">
+    <h2>🟣 Purplle — all POs <span class="h2-sub" id="loSub"></span></h2>
+    <div class="hint" style="margin-bottom:8px;">Each PO is punched <b>separately</b>. Tick the POs (or use the top box to select all), press <b>Start punching</b>, then for every PO: <b>Copy</b> → paste in EasyEcom → <b>Done &amp; Next</b>. Drop several Purplle PDFs on the upload box to add more POs.</div>
+    <div class="ptitle" style="margin:8px 0 4px;">📑 Master Dispatch Tracker fill (applies to every copied row)</div>
+    <div class="row" style="gap:8px;flex-wrap:wrap;align-items:flex-end;margin-bottom:8px;">
+      <label style="font-size:11px;color:var(--muted);">Date punched<br><input type="text" id="loDate" style="width:110px;" oninput="loCfgSave()"></label>
+      <label style="font-size:11px;color:var(--muted);">Channel<br><input type="text" id="loChan" style="width:90px;" oninput="loCfgSave()"></label>
+      <label style="font-size:11px;color:var(--muted);">Zone<br><input type="text" id="loZone" list="dlZone" style="width:100px;" oninput="loCfgSave()"></label>
+      <label style="font-size:11px;color:var(--muted);">WH from<br><input type="text" id="loWh" list="dlWh" style="width:110px;" oninput="loCfgSave()"></label>
+      <label style="font-size:11px;color:var(--muted);flex:1;min-width:200px;">Delivery to (distributor)<br><input type="text" id="loTo" style="width:100%;" oninput="loCfgSave()"></label>
+      <label style="font-size:11px;color:var(--muted);">Transporter<br><input type="text" id="loTrans" style="width:110px;" oninput="loCfgSave()" placeholder="fill later"></label>
+    </div>
+    <div class="table-wrap"><table><thead><tr><th><input type="checkbox" id="loAllChk" checked onchange="loAllToggle(this.checked)" title="Select all / none"></th><th>PO</th><th>PO date</th><th>Delivery location</th><th>SKUs</th><th>Qty</th><th>Value (PDF)</th><th></th></tr></thead><tbody id="loPOs"></tbody><tfoot id="loPOFoot"></tfoot></table></div>
+    <div class="row" style="margin:10px 0;">
+      <button class="btn-ok" onclick="loSheetCopy(false)">📋 Copy Master Sheet rows (selected POs)</button>
+      <button class="btn-main" onclick="loSend()">🔄 Update Master (selected)</button>
+      <button class="btn-ghost btn-sm" onclick="loSheetCopy(true)">📋 with header</button>
+      <button class="btn-ghost btn-sm" onclick="loPoCopy()">📋 PO numbers only</button>
+      <button class="btn-main" onclick="loStart()">▶ Start punching selected (one PO at a time)</button>
+      <button class="btn-warn btn-sm" onclick="loXlsx()">⬇️ Excel (one sheet per PO)</button>
+      <button class="btn-ghost btn-sm" onclick="loResetDone()">↺ Reset done ticks</button>
+      <button class="btn-danger btn-sm" onclick="loDeleteSelected()">🗑 Delete selected POs</button>
+      <button class="btn-ghost btn-sm" onclick="loRestore()">♻ Restore deleted POs</button>
+      <button class="btn-danger btn-sm" onclick="loClearExtra()">Remove uploaded POs</button>
+    </div>
+    <div class="ptitle" style="margin:10px 0 4px;">Master sheet preview — copy, then paste in column A of the next empty row</div>
+    <div class="table-wrap"><table><thead><tr><th>DATE PUNCHED</th><th>PO NUMBER</th><th>CHANNEL</th><th>ZONE</th><th>WH FROM</th><th>DELIVERY TO</th><th>TRANSPORTER</th><th>PO VALUE</th><th>PO QTY</th><th>BOXES</th></tr></thead><tbody id="loSheet"></tbody></table></div>
+    <details style="margin-top:8px;"><summary>Combined SKU totals (for packing only — not for punching)</summary>
+    <div class="table-wrap"><table><thead><tr><th>SKU</th><th>EAN</th><th>Name</th><th>Qty</th><th>Price</th><th>Amount</th></tr></thead><tbody id="loComb"></tbody><tfoot id="loFoot"></tfoot></table></div></details>
+  </div>
+
+  <details class="card" id="gsBox" style="padding:12px 16px;">
+    <summary style="cursor:pointer;font-weight:700;">🔗 Google Sheet link — send punched rows straight to your Master Sheet</summary>
+    <div class="hint" style="margin:8px 0;">Paste your Apps Script Web-app URL and key once. They are saved only in <b>this browser</b> (never in the file). Duplicate POs already in the sheet are skipped.</div>
+    <div class="row" style="gap:8px;flex-wrap:wrap;align-items:flex-end;">
+      <label style="font-size:11px;color:var(--muted);flex:1;min-width:260px;">Web-app URL<br><input type="text" id="gsUrl" style="width:100%;" placeholder="https://script.google.com/macros/s/…/exec"></label>
+      <label style="font-size:11px;color:var(--muted);">Key<br><input type="password" id="gsKey" style="width:150px;" placeholder="your key"></label>
+      <button class="btn-ok btn-sm" onclick="gsSave()">💾 Save</button>
+      <button class="btn-ghost btn-sm" onclick="gsTest()">🧪 Test connection</button>
+      <button class="btn-ghost btn-sm" onclick="gsClear()">Remove</button>
+    </div>
+    <div style="margin-top:10px;font:700 11px Inter;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">📒 Sync record</div><div id="gsLog" class="gs-log"></div>
+  </details>
+  <datalist id="dlZone"><option value="East - WB"><option value="North - DH"><option value="South - KA"><option value="West - MH"></datalist>
+  <datalist id="dlWh"><option value="Delhivery KOL"><option value="Delhivery MUM"><option value="Emiza BLR"><option value="Emiza GGN"></datalist>
+  <div class="card" id="historyCard" style="display:none;">
+    <div class="hx-head">
+      <h2>🕑 Recent conversions <span class="h2-sub">saved on this device</span></h2>
+      <div class="hx-actions">
+        <button class="btn-ghost btn-sm" id="hxHideBtn" onclick="hxToggle()">🙈 Hide</button>
+        <button class="btn-danger btn-sm" onclick="clearHistory()">🗑 Clear all</button>
+      </div>
+    </div>
+    <div id="hxBody">
+      <div id="histDash"></div>
+      <div class="hx-tools"><input id="hxSearch" type="search" placeholder="🔍 Search PO, buyer, date, delivery name…" oninput="renderHistory()"><div class="hx-tabs" id="hxTabs"></div></div>
+      <div class="hx-bar">
+        <label><input type="checkbox" id="hxAll" onchange="hxSelAll(this.checked)"> Select all shown</label>
+        <span id="hxCount"></span>
+        <button class="btn-ok btn-sm" onclick="hxCopy(false)">📋 Copy master rows</button>
+        <button class="btn-ghost btn-sm" onclick="hxCopy(true)">with header</button>
+        <button class="btn-ghost btn-sm" onclick="hxCopyPO()">PO numbers only</button>
+        <button class="btn-main btn-sm" onclick="hxSend()">🔄 Update Master</button>
+        <button class="btn-danger btn-sm" onclick="hxDelSel()">🗑 Delete selected</button>
+      </div>
+      <div id="historyList" class="hx-list"></div>
+      <div class="hint">Tick entries → Copy master rows → paste in column A of your Master Dispatch Tracker (oldest first). Click an entry to reload it.</div>
+    </div>
+  </div>
+
+  <div class="totals" id="totals">
+    <div class="tcard"><div class="l">SKUs</div><div class="v" id="tSkus">0</div></div>
+    <div class="tcard"><div class="l">Total Qty</div><div class="v" id="tQty">0</div></div>
+    <div class="tcard"><div class="l">Total Value</div><div class="v" id="tValue">₹0</div></div>
+    <div class="tcard"><div class="l">Avg Price</div><div class="v" id="tAvg">₹0</div></div>
+    <div class="tcard warn" id="tUnmappedCard" style="display:none;"><div class="l">Unmapped codes</div><div class="v" id="tUnmapped">0</div></div>
+    <div class="tcard danger" id="tDupCard" style="display:none;"><div class="l">Duplicates left</div><div class="v" id="tDup">0</div></div>
+  </div>
+
+  <div class="card" id="dashCard" style="display:none;">
+    <h2>📊 PO dashboard <span class="h2-sub" id="dashSub"></span>
+      <button class="btn-main btn-sm" onclick="shareSummary()">📤 Share summary</button></h2>
+    <div class="dash">
+      <div class="panel"><div class="ptitle">Value share by SKU</div><div id="donut"></div></div>
+      <div class="panel"><div class="ptitle">Top SKUs by quantity</div><div id="bars"></div></div>
+      <div class="panel"><div class="ptitle">Insights</div><div id="insights"></div></div>
+    </div>
+  </div>
+
+  <div class="card" id="rowCard" style="display:none;">
+    <h2>📑 Master Dispatch Tracker — single row <span class="h2-sub" id="rowTag"></span>
+      <span><button class="btn-ok btn-sm" onclick="rcCopy(false)">📋 Copy this PO's row</button>
+      <button class="btn-ghost btn-sm" onclick="rcCopy(true)">with header</button>
+      <button class="btn-ok btn-sm" onclick="rcPackMsg()">📦 Packing message</button>
+      <button class="btn-ok btn-sm" onclick="rcLabelMsg()">🏷 Label message</button>
+      <button class="btn-main btn-sm" onclick="rcSend()">🔄 Update Master</button>
+      <button class="btn-ghost btn-sm" onclick="updateRowCard(true)" title="Re-fill from the PO">↻</button></span></h2>
+    <div class="hint" style="margin-bottom:8px;">One PO = one line. Check the boxes, press Copy, then paste in column A of the next empty row of your Master Dispatch Tracker. Channel / Zone / WH / Transporter are remembered per buyer.</div>
+    <div class="row" style="gap:8px;flex-wrap:wrap;align-items:flex-end;">
+      <label style="font-size:11px;color:var(--muted);">Date punched<br><input type="text" id="rcDate" style="width:105px;"></label>
+      <label style="font-size:11px;color:var(--muted);">PO number<br><input type="text" id="rcPo" style="width:170px;"></label>
+      <label style="font-size:11px;color:var(--muted);">Channel<br><input type="text" id="rcChan" style="width:105px;" oninput="rcSave()"></label>
+      <label style="font-size:11px;color:var(--muted);">Zone<br><input type="text" id="rcZone" list="dlZone" style="width:100px;" oninput="rcSave()"></label>
+      <label style="font-size:11px;color:var(--muted);">WH from<br><input type="text" id="rcWh" list="dlWh" style="width:110px;" oninput="rcSave()"></label>
+      <label style="font-size:11px;color:var(--muted);flex:1;min-width:220px;">Delivery to (distributor)<br><input type="text" id="rcTo" style="width:100%;"></label>
+      <label style="font-size:11px;color:var(--muted);">Transporter<br><input type="text" id="rcTrans" style="width:105px;" oninput="rcSave()"></label>
+      <label style="font-size:11px;color:var(--muted);">PO value<br><input type="text" id="rcVal" style="width:100px;"></label>
+      <label style="font-size:11px;color:var(--muted);">PO qty<br><input type="text" id="rcQty" style="width:70px;"></label>
+      <label style="font-size:11px;color:var(--muted);">Boxes<br><input type="text" id="rcBoxes" style="width:60px;"></label>
+    </div>
+    <div id="rcMsgWrap" style="display:none;margin-top:14px"><div class="ptitle">📨 Ready to paste in WhatsApp <button class="btn-ghost btn-sm" style="float:right" onclick="copyText($('rcMsgBox').textContent)">Copy again</button></div><pre id="rcMsgBox" class="wa"></pre></div>
+  </div>
+
+  <div class="card" id="outputCard" style="display:none;">
+    <h2>2 · Punch-ready output <span class="h2-sub" id="rowCountLabel"></span></h2>
+    <div class="row" style="margin-top:0;">
+      <input type="text" id="search" placeholder="🔍 Filter by SKU, code or name…" oninput="render(true)" style="flex:1; min-width:160px;">
+      <select id="filterMode" onchange="render(true)">
+        <option value="all">Show all</option>
+        <option value="unmapped">Unmapped only</option>
+        <option value="dup">Duplicates only</option>
+      </select>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th onclick="sortBy('idx')">#</th>
+          <th onclick="sortBy('sku')">SKU <span class="arrow" id="ar-sku"></span></th>
+          <th id="thCode">Code</th>
+          <th>Product name</th>
+          <th onclick="sortBy('qty')">Qty <span class="arrow" id="ar-qty"></span></th>
+          <th onclick="sortBy('price')">Price <span class="arrow" id="ar-price"></span></th>
+          <th onclick="sortBy('amount')">Amount <span class="arrow" id="ar-amount"></span></th>
+          <th></th>
+        </tr></thead>
+        <tbody id="tbody"></tbody>
+        <tfoot id="tfoot"></tfoot>
+      </table>
+    </div>
+
+    <h2 style="margin-top:18px;">↔ Copy — Horizontal (rows, for bulk-paste grids)</h2>
+    <div class="row">
+      <button class="btn-ok" onclick="copyRows()">📋 Copy All Rows (SKU · Qty · Price)</button>
+      <button class="btn-main" onclick="easyCsvMain()">⬇ EasyEcom CSV (Sku · Quantity · Price)</button> <button class="btn-warn" onclick="exportCSV()">⬇️ Export CSV (full)</button>
+      <button class="btn-ghost" onclick="exportJSON()">⬇️ Export JSON</button>
+    </div>
+    <div class="hint">Each line = one SKU, tab-separated. Paste straight into a bulk-import grid.</div>
+    <div class="copybox" id="rowsBox"></div>
+
+    <h2 style="margin-top:18px;">↕ Copy — Vertical (single column, for one-field-at-a-time forms)</h2>
+    <div class="row">
+      <button class="btn-main btn-sm" onclick="copyCol('sku')">📋 Copy SKU column</button>
+      <button class="btn-main btn-sm" onclick="copyCol('qty')">📋 Copy Qty column</button>
+      <button class="btn-main btn-sm" onclick="copyCol('price')">📋 Copy Price column</button>
+    </div>
+    <div class="hint">Use when EasyEcom's import screen has separate boxes per SKU — copy just that column and paste down the list.</div>
+  </div>
+
+</div>
+  </div><!-- /viewConvert -->
+
+  <div id="viewBook" style="display:none;">
+    <div class="card">
+      <h2>📒 Record Book <span class="h2-sub" id="bkSub"></span>
+        <span><button class="btn-ok btn-sm" onclick="bkCopySummary()">📤 Copy summary</button>
+        <button class="btn-warn btn-sm" onclick="bkXlsx()">⬇️ Excel</button>
+        <button class="btn-ghost btn-sm" onclick="bkCsv()">CSV</button>
+        <button class="btn-danger btn-sm" onclick="bkClear()" title="Delete the whole record book">🗑</button></span></h2>
+      <div class="hint">Every PO you mark <b>Done &amp; Next</b> or copy as a master-sheet row is logged here automatically (one entry per PO per day).</div>
+      <div class="chips" id="bkRange"></div>
+      <div class="row" style="margin-top:4px;">
+        <input type="text" id="bkSearch" placeholder="🔍 Search PO number…" oninput="renderBook()" style="flex:1;min-width:160px;">
+        <select id="bkBuyer" onchange="renderBook()"><option value="all">All buyers</option><option value="reliance">Reliance</option><option value="1mg">Tata 1MG</option><option value="firstcry">FirstCry</option><option value="purplle">Purplle</option></select>
+      </div>
+      <div class="rb-kpis">
+        <div class="bk-kpi" style="--i:0"><div class="l">POs punched</div><div class="v" id="bkK1">0</div></div>
+        <div class="bk-kpi" style="--i:1"><div class="l">Total units</div><div class="v" id="bkK2">0</div></div>
+        <div class="bk-kpi" style="--i:2"><div class="l">Total value</div><div class="v" id="bkK3">₹0</div></div>
+        <div class="bk-kpi" style="--i:3"><div class="l">Active days</div><div class="v" id="bkK4">0</div></div>
+        <div class="bk-kpi" style="--i:4"><div class="l">Avg POs / day</div><div class="v" id="bkK5">0</div></div>
+      </div>
+      <div class="ptitle" style="margin:4px 0;">Last 14 days — units punched (click a bar to filter that day)</div>
+      <div class="bk-chart" id="bkChart"></div>
+      <div id="bkList"></div>
+    </div>
+  </div>
+
+  <div id="viewSheet" style="display:none;">
+    <div class="card">
+      <h2>📑 Master Sheet <span class="h2-sub" id="sheetSub"></span></h2>
+      <div class="sheetbar">
+        <input type="text" id="sheetSearch" placeholder="🔍 Filter by SKU, code, PO number, buyer…" oninput="renderSheet()" style="flex:1; min-width:200px;">
+        <select id="sheetBuyer" onchange="renderSheet()">
+          <option value="all">All buyers</option>
+          <option value="reliance">Reliance</option>
+          <option value="1mg">Tata 1MG</option>
+          <option value="firstcry">FirstCry</option>
+          <option value="purplle">Purplle</option>
+        </select>
+        <button class="btn-ok btn-sm" onclick="exportSheetXLSX()">⬇️ Export as Excel (.xlsx)</button>
+        <button class="btn-warn btn-sm" onclick="exportSheetCSV()">⬇️ Export as CSV</button>
+      </div>
+      <div class="sheetstat" id="sheetStat"></div>
+      <div class="table-wrap" style="max-height:560px;">
+        <table>
+          <thead><tr><th>#</th><th>Date</th><th>Buyer</th><th>PO No.</th><th>SKU</th><th>Code</th><th>Product</th><th>Qty</th><th>Price</th><th>Amount</th></tr></thead>
+          <tbody id="sheetBody"></tbody>
+        </table>
+      </div>
+      <div class="hint">Every conversion you run is added here automatically (from this device's saved history) — a running master log across all three buyers, ready to export whenever you need a record.</div>
+    </div>
+  </div>
+</div>
+<div id="loBar" style="display:none;position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:50;max-width:calc(100% - 20px);background:var(--panel);border:2px solid var(--accent);border-radius:12px;padding:10px 14px;box-shadow:0 10px 30px rgba(0,0,0,.4);align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;">
+  <b id="loBarTxt" style="color:var(--accent);"></b>
+  <button class="btn-ghost btn-sm" onclick="loPrev()">◀ Prev</button>
+  <button class="btn-ok btn-sm" onclick="copyRows()">📋 Copy SKU rows</button>
+  <button class="btn-ghost btn-sm" onclick="loSheetCopy(false,true)">📑 Sheet row</button>
+  <button class="btn-main btn-sm" onclick="loNext()">✔ Done &amp; Next ▶</button>
+  <button class="btn-ghost btn-sm" onclick="loStop()">✕</button>
+</div>
+<div class="toast" id="toast">✅ Copied!</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+if (window['pdfjsLib']) pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+// ================= Config per buyer =================
+const RELIANCE_MAP = {
+  "8908022401640":["65220","TUCO Glam Makeup Box"],"8908022401404":["64531","TUCO Bye, Dull Skin Kids Face Cleanser 100ml"],"8908022401022":["64474","Reetha Shampoo 300ml"],
+  "8906191251370":["64995","Lice Buster Shampoo 40ml"],"8908022401039":["64468","TUCO Juicy Locks Kids Hair Oil 100ml"],
+  "8908022401473":["64532","TUCO Tangle Tamer Hair Conditioner 100gm"],"8906191250175":["64614","Flake fighter shampoo 100ml"],
+  "8908022401770":["64575","TUCO Bye, Dull Skin Handmade Soap 75gm (3 pack)"],"8906191252100":["65170","Tuco Kids Soap Pack of 4"],
+  "8908022401015":["64472","Tulsi Body wash 300ml"],"8908022401008":["64470","Oat Lotion 300ml"],
+  "8906191250199":["64613","Dull skin lotion 100ml"],"8906191250212":["64615","Face cream + Sunscreen SPF 30"],
+  "8908022401299":["64512","Face cream + Sunscreen SPF 50"],"8908022401732":["64569","Body lotion + sunscreen SPF 30 - 100ml"],
+  "8906191251103":["64983","Kumkumadi Facecream 50g"],"8906191252049":["65146","Lip Tints Pack of 4-Gift Pack"],
+  "8906191252063":["65145","Nothing Lip Balm - 4.5g Chapstick"],"8906191251257":["65015","Lip Tint Cherry - 4.5g Chapstick"],
+  "8906191251240":["65012","Lip Tint Strawberry - 4.5g Chapstick"],"8906191252056":["65144","Beetroot Tint - 4.5g Chapstick"],
+  "8908022401688":["64564","Kiddy Kajal"],"8908022401664":["64562","Daily Skin Facewash"],
+  "8906191252353":["65264","Oat Lotion 200ml"],"8906191251578":["65055","Oat Bathing Bar - Pack of 1 (75g)"],
+  "8906191252339":["65266","Kumkumadi Body Lotion 200ml"],"8906191251585":["65056","Alcohol Free Hand Sanitizer 50ml"],
+  "8906191250878":["64917","Tangle Tamer Hair Spray 50ml"],"8906191251219":["65005","Reetha Shampoo 50ml"],
+  "8906191251226":["65006","Tulsi Body Wash 50ml"],"8906191251233":["65007","Oat Lotion 50ml"],
+  "8908022401657":["64561","Bubbles and Gum Toothpaste"]
+};
+const MG1_MAP = {
+  "1155958":["64983","Kumkumadi Face Cream 50gm"],"1155960":["65170","Soap 75gm Buy 3 Get 1 Free Assorted"],
+  "1155984":["64575","ByeDull Skin Soap 75gm (box of 3)"],"1155987":["64531",""],
+  "1155989":["65005",""],"1155990":["64995","Lice Buster Shampoo 40ml"],
+  "1155992":["64613",""],"1155996":["64615","Face Cream + Sunscreen SPF 30 30gm"],
+  "1155999":["64530","ByeDull Skin Lotion 200ml"],"1156661":["64532","Tangle Tamer Conditioner 100gm"],
+  "1156664":["64614",""],"1156673":["64472","Tulsi Body Wash 300ml"]
+};
+const FC_DB = [["16079354","64470","TuCo Intelligent Baby & Kids Mild Lotion 300ml with Lil","8908022401008",375],["16079355","64471","TuCo Intelligent Baby & Kids Mild Lotion 100 ml with Li","8908022401046",250],["16079356","64472","TuCo Intelligent Kids Mild Body Wash 300ml with Tulsi,","8908022401015",360],["16079357","64473","TuCo Intelligent Kids Mild Body Wash 100ml with Tulsi,","8908022401053",250],["16079358","64474","TuCo Intelligent Kids Mild Shampoo 300ml with Soapnut,","8908022401022",450],["16079359","64475","TuCo Intelligent Kids Mild Shampoo 100ml with Soapnut,","8908022401060",225],["16079360","C35233","TuCo Intelligent Kids Mild Lotion Body Wash Shampoo 100","",500],["16079361","C35225","TuCo Intelligent Kids Mild Lotion Body Wash 100ml X pac","",500],["16079362","C35222","TuCo Intelligent Kids Mild Body Wash Shampoo 100 ml X P","",500],["16079363","64468","TuCo Intelligent Kids Hair Oil 100ml with Coconut, Mint","8908022401039",315],["16079364","64494","TuCo Intelligent Kids Anti Dandruff Shampoo 200ml with","8908022401145",360],["16079366","64486","TuCo Intelligent Kids Whipped Soap 100gm with Coconut,","8908022401077",500],["16079367","64466","TuCo Intelligent Kids Unicorn Soap for Deep Cleaning, P","8908022401138",350],["16079368","64495","TuCo Intelligent Kids Superhero Soap for Deep Cleaning,","8908022401213",350],["16079369","64465","TuCo Intelligent Kids Bye, Dull Skin Soap Pack of 2X75","8908022401206",315],["16079370","64496","TuCo Intelligent Kids Bye, Dry Skin Soap Pack of 2X100g","8908022401220",350],["16079371","64497","TuCo Intelligent Kids Deep Clean Skin Soap Pack of 2X10","8908022401237",350],["16079372","64498","TuCo Intelligent Kids Don’t be sensitive, Skin Soap Pac","",315],["16079373","64511","TuCo Intelligent Kids Lip, Cheek and Eyelid Tint 10g wi","8908022401282",600],["16079374","64615","TuCo Intelligent Kids Saffron Face Cream & Sunscreen UV","8906191250212",300],["16079375","64528","TuCo Intelligent Dry + Dull Skin Super Bar Pack of 2X10","",350],["18546687","64576","TuCo Intelligent Kids Magic Gel 50 g","8908022401480",350],["18546688","64578","TuCo Intelligent Kids Skin Rash Magic Souffle- 100g","8908022401497",500],["18546689","64566","TuCo Intelligent Kids Wipe it all- 20 wipes","8908022401633",250],["18546690","64580","TuCo Intelligent Kids Nothing Lip balm- 10 g","8908022401527",400],["18546691","64577","TuCo Intelligent Kids Put your hands up- Natural Body M","",500],["18546692","64581","TuCo Intelligent Kids Hair Care Heroes- Shampoo 100ml +","",900],["18546693","64540","TuCo Intelligent Kids Dull Skin Kit : Bye, Dull Skin So","",1100],["18546695","64513","TuCo Intelligent Kids Airline Approved Travel Pack! : S","",900],["18640008","64575","TuCo Intelligent Kids Bye, Dull Skin Soap Pack of 3X75","8908022401770",360],["18640115","64946","TuCo Intelligent Kids Bye, Dull Skin Soap Pack of 4X75","8908022401510",625],["18661153","64579","TuCo Intelligent Cocoa Lip, Cheek & Eye Tint 10g","8908022401572",300],["18661155","64532","TuCo Intelligent Tangle Tamer Conditioner 100g","8908022401473",350],["18661156","64530","TuCo Intelligent Dull Skin Lotion 200ml","8908022401398",400],["18661157","64531","TuCo Intelligent Dull Skin Facewash 100ml","8908022401404",250],["18851379","64600","TuCo Intelligent Kids Glam Make up Box","",899],["18907162","64573","Tuco Intelligent 2-in-1 Mosquito Repellent Lotion","8908022401701",400],["19167331","64573","TuCo Intelligent Don't Bug Me Mosquito Repellent Lotion","8908022401701",400],["19167334","64564","TuCo Intelligent Kiddy Kajal","8908022401688",250],["19167335","64567","TuCo Intelligent Nailed It","8908022401718",400],["19337029","64606","TuCo Intelligent Kids Put your hands up - Natural Body","8906191250113",350],["19337030","64568","TuCo Intelligent Kids Lice Buster Shampoo 100ml","8908022401725",360],["19337031","64571","TuCo Intelligent Kids Sun-Spray SPF30","8908022401756",700],["19337032","64569","TuCo Intelligent Kids Body Sunscreen SPF30","8908022401732",450],["19526932","64585","TuCo Intelligent Kids Skin Rash Soap Pack of 3","8908022401886",535],["19526933","64565","TuCo Intelligent Kids Don't Bug Me- 12 Mosquito Repelle","8908022401695",249],["19526934","64608","TuCo Intelligent Kids Put your hands up - Natural Body","8908022401503",350],["19526935","64612","TuCo Intelligent Kids Sunscreen - SPF 50 PA+++ Intellig","8906191250168",699],["19798836","65220","TuCo Kids Glam MakeUp Box","8908022401640",899],["19840456","64567","Tuco Kids Nailed It Nail Paint 2* 10ml","8908022401718",400],["19840457","64512","Tuco Kids Sunscreen + Face Cream SPF 50 50g","8908022401299",500],["19840458","64612","Tuco Kids Body Sunscreen Stick 15g","8906191250168",450],["19893991","64563","TuCo Kids Hair Detangler Spray","8908022401671",350],["20007121","64568","Tuco Kids Natural Lice Buster Shampoo | Camphor, Neem,","8908022401725",400],["20007122","64631","Tuco Kids Natural Lice Buster Shampoo | Camphor, Neem,","",715],["20007126","64563","Tuco Kids Tangle Tamer Detangler Spray | Aloe Vera, Fla","8908022401671",350],["20189855","65220","Tuco Kids Organic Glam Makeup Box for Girls | Safe Make","8908022401640",899],["20189856","64567","Tuco Kids Nailed It","8908022401718",400],["20250303","64613","Tuco Kids Summer Dull Skin Lotion | For Dull Skin | Tur","8906191250199",250],["20271999","64607","Tuco Kids Don't Bug Me Mosquito Repellent Spray | Prote","8906191250144",450],["20272000","64611","Tuco Alcohol-free sanitizer | Perfect for fighting germ","8906191250151",250],["20272001","64613","Tuco Kids Summer Dull Skin Lotion | For Dull Skin | Tur","8906191250199",250],["20384196","64938","Tuco Kids Nailed It Natural Nail Paint - Blue","8906191250922",150],["20384197","64939","Tuco Kids Nailed It Natural Nail Paint - Green","8906191250939",150],["20384198","64937","Tuco Kids Nailed It Natural Nail Paint -  Pink","8906191250915",150],["20384415","64973","Tuco Kids Lunch Box with 3 Compartment Leak-Proof BPA F","",1099],["20384416","64974","Tuco Kids Lunch Box 3 Compartment Leak-Proof BPA Free S","",1099],["20384417","64976","Tuco Kids Lunch Box 3 Compartment Leak-Proof BPA Free S","",1099],["20384418","64975","Tuco Kids Lunch Box 3 Compartment Leak-Proof BPA Free S","",1099],["20384419","64978","Tuco Kids Back to School Bag For Boys And Girls Pink |","",1349],["20384420","64977","Tuco Kids Back to School Bag For Boys And Girls Blue |","",1349],["20666571","64914","Tuco Kids Body Wash/Shower Gel and Dull Skin Facewash C","",600],["20666572","64581","Tuco Kids Conditioner & Shampoo, Proven Effectiveness -","",600],["20666573","65029","Tuco Kids Facewash & Shampoo, Proven Effectiveness - 10","",700],["20666574","65031","Tuco Kids Handmade Soap & Face Wash, Everyday Use for A","",700],["20838464","64962","Tuco Kids Cold Pressed Coconut Oil - 200ml","8906191250960",315],["20838465","64994","Tuco Kids Weightless face gel - 50gm","8906191251097",350],["20838466","64983","Tuco Kids Kumkumadi face cream - 50gm","8906191251103",250],["21060214","64637","Tuco Kids Bye, Dull Skin Soap Pack of 1 with Turmeric |","8906191250854",180],["21060215","64638","Tuco Kids Skin Rash Handmade Soap With Turmeric, Shea B","8906191250861",180],["21060216","65055","TuCo Kids Oat Bathing Bar - Soap-Free, pH 5.5, Amoeba-S","8906191251578",200],["21060217","64984","TuCo Kids Oat Bathing Bar - Soap-Free, pH 5.5, Amoeba-S","8906191251080",360],["21060218","64617","Tuco Kids Natural Magic Mist for boys | Body Spray | Ge","8906191250236",250],["21060219","64616","Tuco Kids Natural Magic Mist for Girls | Body Spray | G","8906191250229",250],["21060229","65025","Tuco Kids Organic Glam Girl Kit for Girls | Safe Makeup","8906191251363",400],["21137700","65106","Tuco Kids Kumkumadi Face Cream | Infused with Kumkumadi","",500],["21137701","65078","Tuco Kids Kumkumadi Glow Kit | Dull Skin Face Wash & Ku","",700],["21154260","64562","Tuco Kids Oily Skin Face Wash for Acne Prone Skin | Bal","8908022401664",350],["21238170","65012","Tuco Kids Strawberry Tint Lip Balm","8906191251240",300],["21238171","64586","Tuco Kids Nothing Lip Balm","8908022401862",300],["21238172","65015","Tuco Kids Cherry Tint Lip Balm","8906191251257",300],["21268525","65095","Tuco Kids Mega Makeup Kit for Girls, Organic, Safe & No","8906191252001",2500],["21536175","64561","Tuco Kids Bubbles & Gum Anticavity Toothpaste | Pepperm","8908022401657",180],["21536176","65161","Tuco Kids Bubbles & Gum Anticavity Toothpaste | Pepperm","",360],["21666943","64614","TuCo Kids Flake Fighter Anti Dandruff Shampoo | Dry & I","8906191250175",225],["21952790","65096","TuCo Kids Mild No Tear Shampoo with Reetha & Henna for","8906191251943",700],["21952791","65131","TuCo Kids Aqua Fresh Kit Shampoo, Body Wash & Lotion, G","",600],["21952792","65130","Tuco Kids Boys Will Be Boys Kit, Body Wash & Body Mist,","",400],["21952793","65146","TuCo Kids Lip Tints Gift Set, Pack of 4","8906191252049",600],["21952794","65170","Tuco Kids Soap Buy 3 Get 1 Free with Natural Vitamin C,","8906191252100",350],["22411305","65007","Tuco Kids Natural Oat Lotion","8906191251233",150],["22411306","65006","Tuco Kids Natural Tulsi Shower Gel","8906191251226",150],["22411307","65005","Tuco Kids Natural Reetha Shampoo","8906191251219",150],["22439287","64531","Dull Skin Facewash 100ml","8908022401404",250],["22439288","64983","Kumkumadi Face Cream 50g","8906191251103",250],["22439289","64472","Shower Gel 300ml / Tulsi Body Wash","8908022401015",360],["22439292","64532","Conditioner 100ml","8908022401473",350],["22439293","64474","Shampoo 300ml (Reetha)","8908022401022",450],["22439294","64561","Toothpaste POI 50gm","8908022401657",180],["22439295","65170","Soap 3+1 / Soap Pack of 4","8906191252100",350],["22439296","64512","Sunscreen SPF50 50g","8908022401299",500],["22447460","65096","Shampoo 500ml","8906191251943",700],["22447524","64564","Kajal pack of 1","8908022401688",250],["22447525","64575","Dull Skin Soap Pack of 3","8908022401770",360],["22439290","64615","Tuco Kids Sunscreen SPF 30 With Facecream","",300],["22447458","64995","Lice Buster Shampoo 40ml","8906191251370",125],["23840092","64569","TuCo Intelligent Kids Body Sunscreen SPF30","8908022401732",450],["23840093","64470","TuCo Intelligent Baby & Kids Mild Lotion 300ml with Lil","8908022401008",375],["23840094","64637","Tuco Kids Bye, Dull Skin Soap Pack of 1 with Turmeric |","8906191250854",180],["8906191252339","65266","Kumkumadi Lotion","8906191252339",350],["8906191252353","65264","Oat Lotion","8906191252353",300],["8906191252285","65269","Dull Skin Body Wash","8906191252285",300],["8906191252322","65267","Kumkumadi Soap","8906191252322",330],["8906191252346","65265","3-in-1 Body Wash","8906191252346",400],["8906191252438","65273","Whipped Body Wash","8906191252438",500],["8906191251097","64994","Oat Face Gel","8906191251097",260]]; // [FCID, TucoSKU, ShortName, EAN, MRP] from TUCO KIDS MASTER TRACKER 2026 · FCIDDB
+const FC_MAP = {}; FC_DB.forEach(r=>{ FC_MAP[r[0]]=[r[1],r[2]]; });
+let _fcEan=null;
+function fcEan(){ if(!_fcEan){ _fcEan={}; FC_DB.forEach(r=>{ if(r[3] && !_fcEan[r[3]]) _fcEan[r[3]]={sku:r[1],name:r[2]}; }); } return _fcEan; }
+// Purplle (Manash E-Commerce) — PO carries the EAN, so reuse every known EAN -> SKU pair
+const LO_MAP = {"8906191252261":["65221","Bye, Dull Skin Soap (Grade 1) 75g Pack of 2"]};
+Object.entries(RELIANCE_MAP).forEach(([k,v])=>{ LO_MAP[k]=v; });
+FC_DB.forEach(r=>{ if (r[3] && !LO_MAP[r[3]]) LO_MAP[r[3]]=[r[1],r[2]]; });
+const CFG = {
+  reliance:{
+    key:'reliance', codeLabel:'EAN', tag:'RELIANCE RETAIL',
+    sub:'Reliance Retail POs — matched by EAN/barcode to your Easyecom SKU, with PO details pulled out for reference.',
+    map:RELIANCE_MAP, prices:[['base','Base Cost (tax-inclusive, matches PDF)'],['extax','Unit Price ex-GST (EasyEcom style)'],['mrp','MRP']],
+    codePH:'EAN / barcode (e.g. 8908022401640)',
+    hdrCode:['ean','barcode'], hdrQty:['quantity','qty'], hdrPrice:{base:['basecost'], mrp:['mrp']},
+    placeholder:"Paste a Reliance PO table — the parser auto-detects the format:\n• With a header row (Article No / EAN / Quantity / MRP / Base Cost…) — any column order\n• The wide numbered export with no header\n• A simple list: EAN  Qty  Price (tab/space/comma separated)"
+  },
+  '1mg':{
+    key:'1mg', codeLabel:'Item Code', tag:'TATA 1MG',
+    sub:'Tata 1MG "Purchase Order Note" — matched by Supplier Item Code to your Tuco SKU, with PO details pulled out for reference.',
+    map:MG1_MAP, prices:[['cost','Cost Per Unit (With GST)'],['mrp','MRP']],
+    codePH:'Supplier item code (e.g. 1155958)',
+    hdrCode:['supplieritemcode','itemcode'], hdrQty:['qty','quantity'], hdrPrice:{cost:['costperunit','cost'], mrp:['mrp']},
+    placeholder:"Paste a 1MG item table — the parser auto-detects the format:\n• With a header row (S No / Supplier Item Code / Item Name / Qty / MRP / Cost Per Unit…) — any column order\n• A simple list: Item Code  Qty  Price (tab/space/comma separated)"
+  },
+  purplle:{
+    key:'purplle', codeLabel:'EAN', tag:'PURPLLE',
+    sub:'Purplle (Manash E-Commerce) POs — matched by EAN to your Easyecom SKU, with PO details and delivery rules pulled out for reference.',
+    map:LO_MAP, prices:[['incl','Rate incl. GST (EasyEcom price — matches PO value)'],['rate','Rate/Unit (ex-GST, as on PO)'],['mrp','MRP']],
+    codePH:'EAN / barcode (e.g. 8908022401299)',
+    hdrCode:['ean','barcode'], hdrQty:['qty','quantity'], hdrPrice:{rate:['rate','rateunit'], incl:['amount'], mrp:['mrp']},
+    placeholder:"Paste a Purplle PO table — the parser auto-detects the format:\n• With a header row (EAN / MRP / Qty / Rate/Unit / Amount…) — any column order\n• A simple list: EAN  Qty  Price (tab/space/comma separated)"
+  },
+  firstcry:{
+    key:'firstcry', codeLabel:'FCID', tag:'FIRSTCRY',
+    sub:'FirstCry (OM Enterprises) POs — matched by FCID (falls back to EAN, then Style Code) using your FCIDDB sheet, with PO details pulled out for reference.',
+    map:FC_MAP, prices:[['landing','Landing Rate (incl. tax)'],['base','Base Cost (ex-tax)'],['mrp','MRP']],
+    codePH:'FCID (e.g. 22439287)',
+    hdrCode:['fcid'], hdrQty:['totalqty','qty'], hdrPrice:{landing:['landingrate','landing'], base:['basecost'], mrp:['mrp']},
+    placeholder:"Paste a FirstCry PO table — the parser auto-detects the format:\n• With a header row (FCID / Product Name / MRP / Base Cost / Landing Rate / Total Qty…) — any column order\n• A simple list: FCID  Qty  Price (tab/space/comma separated)"
+  }
+};
+
+let mode = 'reliance';
+let rows = [];            // {sku, code, name, qty, price, mapped, dup}
+let sortState = {key:null, dir:1};
+let lastHeader = null;    // {mode, fields:[[l,v]], wide:[[l,v]]}
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toNum(v){ if (v==null) return 0; const n=parseFloat(String(v).replace(/[,₹\s]/g,'')); return isNaN(n)?0:n; }
+function splitLine(line){
+  if (line.includes('\t')) return line.split('\t').map(s=>s.trim());
+  if (line.includes(',')) return line.split(',').map(s=>s.trim());
+  return line.trim().split(/\s+/);
+}
+function findHeaderCol(cells, kws){
+  for (let i=0;i<cells.length;i++){
+    const h = cells[i].toLowerCase().replace(/[^a-z0-9]/g,'');
+    for (const k of kws) if (h.includes(k)) return i;
+  }
+  return -1;
+}
+const isEan = t => /^\d{8,14}$/.test(String(t||'').trim());
+
+// ================= Theme =================
+function applyTheme(t){
+  const r = document.documentElement;
+  if (t) r.setAttribute('data-theme', t); else r.removeAttribute('data-theme');
+  $('themeBtn').textContent = t==='dark' ? '☀️ Theme' : (t==='light' ? '🌓 Theme' : '🌙 Theme');
+}
+function toggleTheme(){
+  const cur = document.documentElement.getAttribute('data-theme') || '';
+  const next = cur==='dark' ? 'light' : (cur==='light' ? '' : 'dark');
+  applyTheme(next);
+  try{ localStorage.setItem('po_all_theme', next); }catch(e){}
+}
+
+// ================= Tab icon (changes colour with the buyer) =================
+const FAV_COLORS = { reliance:'#e5484d', '1mg':'#f5a300', firstcry:'#22b8cf', purplle:'#8b5cf6' };
+function setFavicon(color){
+  try{
+    const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='${color}'/><path d='M17 12h21l11 11v27a3 3 0 0 1-3 3H17a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3z' fill='#fff'/><path d='M38 12v11h11z' fill='#000' opacity='.18'/><path d='M21 33h22M21 41h14' stroke='${color}' stroke-width='4' stroke-linecap='round'/></svg>`;
+    const href = 'data:image/svg+xml,' + encodeURIComponent(svg);
+    $('favicon').href = href;
+    const img = new Image();
+    img.onload = () => { try{ const c=document.createElement('canvas'); c.width=c.height=64; c.getContext('2d').drawImage(img,0,0,64,64); $('favicon-png').href = c.toDataURL('image/png'); }catch(e){} };
+    img.src = href;
+  }catch(e){}
+}
+
+// ================= Mode =================
+function setMode(m, keepData){
+  mode = m;
+  const c = CFG[m];
+  document.documentElement.setAttribute('data-mode', m);
+  setFavicon(FAV_COLORS[m]||'#e5484d');
+  $('mb-reliance').classList.toggle('active', m==='reliance');
+  $('mb-1mg').classList.toggle('active', m==='1mg');
+  $('mb-firstcry').classList.toggle('active', m==='firstcry');
+  $('mb-purplle').classList.toggle('active', m==='purplle');
+  $('subLine').textContent = c.sub;
+  $('input').placeholder = c.placeholder;
+  $('priceSource').innerHTML = c.prices.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
+  $('mapSummary').textContent = `⚙ ${c.codeLabel} → Tuco/Easyecom SKU mapping (${c.tag})`;
+  $('mapCode').placeholder = c.codePH;
+  $('thCode').textContent = c.codeLabel;
+  renderMappingList();
+  if (typeof renderLoBatch==='function') renderLoBatch();
+  if (!keepData){
+    rows = []; lastHeader = null; lastItems = null; lastItemsMode = null; lastFullText = null;
+    $('outputCard').style.display='none'; $('totals').style.display='none'; $('refCard').style.display='none';
+  }
+  if (typeof updateRowCard==='function') updateRowCard();
+}
+
+// ================= Mapping =================
+const mapKey = () => 'po_all_map_' + mode;
+function getCustom(){ try{ return JSON.parse(localStorage.getItem(mapKey())||'{}'); }catch(e){ return {}; } }
+function getFullMapping(){
+  const out = {};
+  Object.entries(CFG[mode].map).forEach(([k,v])=> out[k]={sku:v[0],name:v[1]});
+  Object.assign(out, getCustom());
+  return out;
+}
+function addMapping(){
+  const code=$('mapCode').value.trim(), sku=$('mapSku').value.trim(), name=$('mapName').value.trim();
+  if (!code || !sku){ alert('Enter both the code and the SKU.'); return; }
+  const c = getCustom(); c[code]={sku,name};
+  try{ localStorage.setItem(mapKey(), JSON.stringify(c)); }catch(e){}
+  $('mapCode').value=''; $('mapSku').value=''; $('mapName').value='';
+  renderMappingList();
+}
+function removeMapping(k){
+  const c = getCustom(); delete c[k];
+  try{ localStorage.setItem(mapKey(), JSON.stringify(c)); }catch(e){}
+  renderMappingList();
+}
+function renderMappingList(){
+  const custom = getCustom();
+  const b = Object.entries(CFG[mode].map).map(([k,v])=>`<div class="mapping-row"><span>${esc(k)} → ${esc(v[0])} ${v[1]?'('+esc(v[1])+')':''}</span><span style="color:var(--muted);font-size:10px;">built-in</span></div>`).join('');
+  const cu = Object.entries(custom).map(([k,v])=>`<div class="mapping-row"><span>${esc(k)} → ${esc(v.sku)} ${v.name?'('+esc(v.name)+')':''}</span><button class="del-btn" onclick="removeMapping('${esc(k)}')">✕</button></div>`).join('');
+  $('mappingList').innerHTML = (cu?'<div style="font-size:11px;color:var(--muted);margin:6px 0 2px;">CUSTOM</div>'+cu:'')
+    + `<div style="font-size:11px;color:var(--muted);margin:6px 0 2px;">BUILT-IN (${Object.keys(CFG[mode].map).length})</div>` + b;
+}
+
+// ================= Parse pasted text =================
+function clearAll(){
+  $('input').value=''; rows=[]; lastHeader=null;
+  $('outputCard').style.display='none'; $('totals').style.display='none'; $('refCard').style.display='none';
+}
+function mk(map, code, name, qty, price, x){
+  let m = map[code], via = '', warn = '';
+  if (mode==='firstcry'){
+    const ean = (x&&x.ean) || (isEan(code)?code:''), e = ean ? fcEan()[ean] : null;
+    if (m && e && e.sku !== m.sku) warn = `FCID says ${m.sku} but EAN ${ean} says ${e.sku}`;
+    if (!m && e){ m = e; via = 'EAN'; }
+    else if (!m && x && /^C?\d{4,6}$/.test(x.style||'')){ m = {sku:x.style, name:''}; via = 'Style code'; }
+  }
+  return { sku: m ? m.sku : code, code, name: name || (m&&m.name) || '', qty, price, mapped: !!m, via, warn };
+}
+function parseText(text){
+  const lines = text.trim().split('\n').filter(l=>l.trim());
+  if (!lines.length) return [];
+  const map = getFullMapping(), ps = $('priceSource').value, out = [];
+  const first = splitLine(lines[0]);
+  const cfg = CFG[mode];
+  const codeCol = findHeaderCol(first, cfg.hdrCode), qtyCol = findHeaderCol(first, cfg.hdrQty);
+
+  if (codeCol>=0 && qtyCol>=0){
+    const nameCol = findHeaderCol(first, ['itemname','productname','description']);
+    const cols = {}; Object.entries(cfg.hdrPrice).forEach(([k,kw])=>cols[k]=findHeaderCol(first,kw));
+    let pc = cols[ps]; if (pc==null || pc<0) pc = Object.values(cols).find(v=>v>=0);
+    const eanCol = findHeaderCol(first, ['ean','barcode']);
+    for (let i=1;i<lines.length;i++){
+      const c = splitLine(lines[i]);
+      if (c.length<2 || (c[0]||'').toLowerCase().startsWith('total')) continue;
+      const code = c[codeCol]||'', qty = toNum(c[qtyCol]);
+      if (!code || !qty) continue;
+      out.push(mk(map, code, nameCol>=0?c[nameCol]:'', qty, pc>=0?toNum(c[pc]):0, {ean: eanCol>=0?c[eanCol]:''}));
+    }
+    return out;
+  }
+  if (mode==='reliance' && first.length>=15){          // wide numbered export, no header
+    for (const line of lines){
+      const c = splitLine(line); if (c.length<15) continue;
+      const ean = c.find(isEan)||''; const ei = c.indexOf(ean);
+      if (!ean) continue;
+      const qty = toNum(c[ei+6]), mrp = toNum(c[ei+8]), base = toNum(c[ei+9]);
+      if (!qty) continue;
+      out.push(mk(map, ean, c[ei+1]||'', qty, ps==='mrp'?mrp:(base||mrp)));
+    }
+    if (out.length) return out;
+  }
+  for (const line of lines){                            // simple list
+    const low=line.toLowerCase();
+    if ((low.includes('code')||low.includes('ean')||low.includes('sku')) && low.includes('qty')) continue;
+    if (low.startsWith('total')) continue;
+    const c = splitLine(line); if (c.length<2 || !c[0]) continue;
+    out.push(mk(map, c[0], '', toNum(c[1]), toNum(c[2])));
+  }
+  return out;
+}
+function mergeDuplicates(list){
+  const merge = $('mergeDupes').checked, counts = {};
+  list.forEach(r=>counts[r.sku]=(counts[r.sku]||0)+1);
+  if (!merge) return list.map(r=>({...r, dup:counts[r.sku]>1}));
+  const seen={}, out=[];
+  list.forEach(r=>{
+    if (seen[r.sku]!==undefined){ const t=out[seen[r.sku]]; t.qty+=r.qty; if(!t.price) t.price=r.price; }
+    else { seen[r.sku]=out.length; out.push({...r,dup:false}); }
+  });
+  return out;
+}
+function convert(){
+  const text = $('input').value;
+  if (!text.trim()){ alert('Paste PO data first.'); return; }
+  if (mode!=='firstcry' && /\bfcid\b/i.test(text.split('\n')[0])) { setMode('firstcry'); showToast('Switched to FirstCry (FCID header detected)'); }
+  // auto-switch to Reliance if 13-digit EANs are present
+  if (mode==='1mg' && /\b\d{13}\b/.test(text)) { setMode('reliance'); showToast('Switched to Reliance (EANs detected)'); }
+  const parsed = parseText(text);
+  if (!parsed.length){ alert(`Could not read any ${CFG[mode].codeLabel}/Qty rows — check the paste includes a code column and a quantity column.`); return; }
+  rows = mergeDuplicates(parsed); lastHeader = null; $('refCard').style.display='none';
+  render();
+}
+
+// ================= Sort / filter / edit =================
+function sortBy(k){
+  if (k==='idx'){ sortState={key:null,dir:1}; }
+  else if (sortState.key===k) sortState.dir*=-1; else sortState={key:k,dir:1};
+  render(true);
+}
+function getFiltered(){
+  const q = ($('search').value||'').toLowerCase().trim(), fm = $('filterMode').value;
+  let list = rows.map((r,i)=>({...r,_i:i}));
+  if (q) list = list.filter(r=>r.sku.toLowerCase().includes(q)||(r.code||'').includes(q)||(r.name||'').toLowerCase().includes(q));
+  if (fm==='unmapped') list=list.filter(r=>!r.mapped);
+  if (fm==='dup') list=list.filter(r=>r.dup);
+  ['sku','qty','price','amount'].forEach(k=>{ const el=$('ar-'+k); if(el) el.textContent = (k===sortState.key)?(sortState.dir===1?'▲':'▼'):''; });
+  if (sortState.key){
+    list.sort((a,b)=>{
+      let av,bv;
+      if (sortState.key==='amount'){ av=a.qty*a.price; bv=b.qty*b.price; } else { av=a[sortState.key]; bv=b[sortState.key]; }
+      return typeof av==='string' ? av.localeCompare(bv)*sortState.dir : (av-bv)*sortState.dir;
+    });
+  }
+  return list;
+}
+function updateField(i, f, v){ if (f==='sku') rows[i].sku=v.trim(); else rows[i][f]=toNum(v); recomputeDup(); render(true); }
+function recomputeDup(){ const c={}; rows.forEach(r=>c[r.sku]=(c[r.sku]||0)+1); rows.forEach(r=>r.dup=c[r.sku]>1); }
+function deleteRow(i){ rows.splice(i,1); render(true); }
+
+// ================= Render =================
+function render(quiet){
+  const tq = rows.reduce((s,r)=>s+r.qty,0), tv = rows.reduce((s,r)=>s+r.qty*r.price,0);
+  const un = rows.filter(r=>!r.mapped).length, du = rows.filter(r=>r.dup).length;
+  countUp($('tSkus'),rows.length,v=>Math.round(v)); countUp($('tQty'),tq,v=>Math.round(v).toLocaleString('en-IN'));
+  countUp($('tValue'),tv,v=>'₹'+v.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2}));
+  countUp($('tAvg'),tq?tv/tq:0,v=>'₹'+v.toFixed(2));
+  $('totals').style.display='grid';
+  $('tUnmappedCard').style.display = un?'block':'none'; $('tUnmapped').textContent=un;
+  const unCodes = rows.filter(r=>!r.mapped);
+  let banner = document.getElementById('unmappedBanner');
+  if (!banner){
+    banner = document.createElement('div');
+    banner.id = 'unmappedBanner';
+    banner.style.cssText = 'display:none;margin:0 0 14px;padding:12px 14px;border-radius:8px;border:1.5px solid var(--warn);background:color-mix(in srgb, var(--warn) 12%, var(--panel));font-size:12.5px;';
+    $('totals').parentNode.insertBefore(banner, $('totals'));
+  }
+  if (unCodes.length){
+    banner.style.display='block';
+    banner.innerHTML = `⚠️ <b>${unCodes.length} SKU${unCodes.length===1?'':'s'} not in your mapping table</b> — showing the raw code instead of a Tuco SKU, so the totals can look right while the SKU is wrong. ` +
+      unCodes.slice(0,8).map(r=>`<code style="background:var(--panel2);padding:1px 6px;border-radius:4px;margin:0 3px;">${esc(r.code||r.sku)}</code>`).join('') +
+      (unCodes.length>8 ? ` +${unCodes.length-8} more` : '') +
+      ` — add it in the mapping table below, or type the correct SKU directly into the row.`;
+  } else {
+    banner.style.display='none';
+  }
+  $('tDupCard').style.display = du?'block':'none'; $('tDup').textContent=du;
+
+  const f = getFiltered();
+  $('rowCountLabel').textContent = `showing ${f.length} of ${rows.length}`;
+  $('tbody').innerHTML = f.map(r=>{
+    const i=r._i, flags=(!r.mapped?'<span class="flag flag-warn">unmapped</span>':'')+(r.dup?'<span class="flag flag-dup">dup</span>':'')+(r.via?`<span class="flag flag-via">via ${esc(r.via)}</span>`:'')+(r.warn?`<span class="flag flag-warn" title="${esc(r.warn)}">check</span>`:'');
+    return `<tr class="${!r.mapped?'unmapped':''} ${r.dup?'dup':''}" style="--i:${Math.min(i,24)}">
+      <td>${i+1}</td>
+      <td><span class="sku" contenteditable="true" onblur="updateField(${i},'sku',this.textContent)">${esc(r.sku)}</span>${flags}</td>
+      <td class="code">${esc(r.code)||'—'}</td>
+      <td class="pname" title="${esc(r.name)}">${esc(r.name)||'—'}</td>
+      <td><input class="edit-input num" type="number" value="${r.qty}" onchange="updateField(${i},'qty',this.value)"></td>
+      <td><input class="edit-input num" type="number" step="0.01" value="${r.price.toFixed(2)}" onchange="updateField(${i},'price',this.value)"></td>
+      <td class="num">₹${(r.qty*r.price).toFixed(2)}</td>
+      <td><button class="btn-ghost copy-line" onclick="copyText(rows[${i}].sku+'\\t'+rows[${i}].qty+'\\t'+rows[${i}].price.toFixed(2))">Copy</button>
+          <button class="del-btn" onclick="deleteRow(${i})" title="Delete row">✕</button></td></tr>`;
+  }).join('');
+  $('tfoot').innerHTML = `<tr><td colspan="4">TOTAL (all rows)</td><td class="num">${tq}</td><td></td><td class="num">₹${tv.toFixed(2)}</td><td></td></tr>`;
+  $('rowsBox').textContent = rows.map(r=>`${r.sku}\t${r.qty}\t${r.price.toFixed(2)}`).join('\n');
+  $('outputCard').style.display='block';
+  $('tbody').classList.toggle('anim', !quiet);
+  renderDash();
+  updateRowCard();
+  if (!quiet) { $('outputCard').scrollIntoView({behavior:'smooth', block:'start'}); saveToHistory(tq, tv); try{ const po=hdrVal('PO Number'); if(po) dkFocusSet([po]); }catch(e){} }
+}
+
+// ================= History =================
+function readHist(){ try{ return JSON.parse(localStorage.getItem('po_all_history')||'[]'); }catch(e){ return []; } }
+function saveToHistory(tq, tv){
+  try{
+    const l = readHist();
+    l.unshift({ t:new Date().toLocaleString(), ts:new Date().toISOString(), mode, skus:rows.length, qty:tq, value:tv, data:rows, header:lastHeader });
+    localStorage.setItem('po_all_history', JSON.stringify(l.slice(0,60)));
+  }catch(e){}
+  renderHistory();
+}
+let hxTab='all'; const hxSel=new Set(); const HX_MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const hxHidden=()=>{ try{ return localStorage.getItem('po_hx_hidden')==='1'; }catch(e){ return false; } };
+function hxToggle(){ try{ localStorage.setItem('po_hx_hidden', hxHidden()?'0':'1'); }catch(e){} renderHistory(); }
+const hxPO=h=>h.header&&h.header.fields?String((h.header.fields.find(f=>f[0]==='PO Number')||[])[1]||'').replace('—',''):'';
+function hxDate(h){ let d=h.ts?new Date(h.ts):new Date(h.t); if(isNaN(d)) d=new Date(); return d.getDate()+'-'+HX_MON[d.getMonth()]+'-'+d.getFullYear(); }
+function hxRow(h){
+  const mo=h.mode, hf=h.header?(h.header.wide||[]).concat(h.header.fields||[]):[], gv=l=>{ const f=hf.find(x=>x[0]===l); return f?String(f[1]||'').replace(/\s+/g,' ').trim():''; };
+  let chan=(ROW_DEF[mo]||{}).chan||'', zone='', wh='', to='', trans='';
+  if (mo==='purplle'){ const c=loCfgGet(); chan=c.chan||LO_CFG_DEF.chan; zone=c.zone||LO_CFG_DEF.zone; wh=c.wh||LO_CFG_DEF.wh; to=c.to||LO_CFG_DEF.to; trans=c.trans||''; }
+  else {
+    let c={}; try{ c=JSON.parse(localStorage.getItem('po_row_cfg_'+mo)||'{}'); }catch(e){}
+    chan=c.chan||chan; zone=c.zone||''; wh=c.wh||''; trans=c.trans||'';
+    const dl=hf.find(([l,v])=>/deliver|ship-to|receiving/i.test(l)&&!/date/i.test(l)&&v); if (dl) to=String(dl[1]).replace(/\s+/g,' ').trim();
+    if (mo==='firstcry'){ const b=gv('Buyer'); if(b) to=b; const m=fcWhGet(gv('Dispatch from (Delivered By)')); if(m){ zone=m.zone; wh=m.wh; } }
+  }
+  let val=0; for (const [l,v] of hf){ if(/total/i.test(l)){ const m=String(v).match(/₹\s*([\d,]+(?:\.\d+)?)/); if(m){ val=toNum(m[1]); break; } } }
+  if (!val) val=h.value||0;
+  return [hxDate(h),hxPO(h),chan,canonOf(zone,ZONES),canonOf(wh,WHS),to,trans,(+val).toFixed(2),h.qty,dkBoxes(hxPO(h))];
+}
+function hxShown(){
+  const q=($('hxSearch').value||'').trim().toLowerCase(), l=readHist(), out=[];
+  l.forEach((h,i)=>{
+    if (hxTab!=='all' && h.mode!==hxTab) return;
+    const r=hxRow(h); if (q && !(r.join(' ')+' '+(CFG[h.mode]?CFG[h.mode].tag:h.mode)+' '+h.t).toLowerCase().includes(q)) return;
+    out.push({h,i,r});
+  });
+  return out;
+}
+function renderHistory(){
+  try{ dkSync(); }catch(e){}
+  const l=readHist(), card=$('historyCard');
+  if (!l.length){ card.style.display='none'; return; }
+  card.style.display='block';
+  const hid=hxHidden(); $('hxBody').style.display=hid?'none':''; $('hxHideBtn').textContent=hid?`👁 Show (${l.length})`:'🙈 Hide';
+  if (hid) return;
+  renderHistDash(l);
+  const by={}; l.forEach(h=>by[h.mode]=(by[h.mode]||0)+1);
+  if (hxTab!=='all' && !by[hxTab]) hxTab='all';
+  $('hxTabs').innerHTML=[['all','All',l.length]].concat(Object.entries(by).map(([m,c])=>[m,CFG[m]?CFG[m].tag:m,c])).map(([m,t,c])=>`<span class="hx-tab ${hxTab===m?'on':''}" onclick="hxTab='${m}';renderHistory()">${esc(t)} · ${c}</span>`).join('');
+  const sh=hxShown(); [...hxSel].forEach(i=>{ if(i>=l.length) hxSel.delete(i); });
+  $('hxCount').textContent=`${sh.length} shown · ${[...hxSel].length} selected`;
+  $('hxAll').checked=sh.length>0 && sh.every(x=>hxSel.has(x.i));
+  $('historyList').innerHTML=sh.length?sh.map(({h,i,r})=>`<div class="hx-item ${hxSel.has(i)?'sel':''}" style="--c:${FAV_COLORS[h.mode]||'var(--accent)'}">
+    <input type="checkbox" ${hxSel.has(i)?'checked':''} onchange="hxPick(${i},this.checked)">
+    <div class="hx-main" onclick="loadHistory(${i})"><div class="hx-top"><span class="tag">${esc(CFG[h.mode]?CFG[h.mode].tag:h.mode)}</span><span class="hx-po">${esc(r[1]||'—')}</span><span class="hx-date">${esc(r[0])} · ${esc((h.ts?new Date(h.ts):new Date(h.t)).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}))}</span></div>
+      <div class="hx-sub">${esc([r[5],r[3],r[4]].filter(Boolean).join(' · ')||'—')}</div></div>
+    <div class="hx-nums"><b>₹${Number(r[7]).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})}</b><span>${h.qty} pcs · ${h.skus} SKUs</span></div>
+    <button class="hx-ib" title="Copy this master row" onclick="hxCopyOne(${i})">📋</button>
+    <button class="hx-ib d" title="Delete this entry" onclick="deleteHistoryItem(${i})">✕</button></div>`).join(''):'<div class="hx-empty">No conversions match your search.</div>';
+}
+function hxPick(i,on){ on?hxSel.add(i):hxSel.delete(i); renderHistory(); }
+function hxSelAll(on){ hxShown().forEach(x=>on?hxSel.add(x.i):hxSel.delete(x.i)); renderHistory(); }
+const HX_HDR=['DATE PUNCHED','PO NUMBER','CHANNEL','ZONE','WH FROM','DELIVERY TO (DISTRIBUTOR)','TRANSPORTER','PO VALUE','PO QTY','BOXES'];
+function hxPicked(){ const l=readHist(); return [...hxSel].sort((a,b)=>b-a).map(i=>l[i]).filter(Boolean); }   // oldest first
+function hxCopy(withHdr){
+  const p=hxPicked(); if(!p.length){ showToast('⚠ Tick at least one entry'); return; }
+  copyText((withHdr?HX_HDR.join('\t')+'\n':'')+p.map(h=>hxRow(h).join('\t')).join('\n'));
+  p.forEach(h=>{ const r=hxRow(h); bkLog(h.mode,r[1],h.qty,r[7],h.skus); });
+  showToast(`✅ ${p.length} master row${p.length>1?'s':''} copied`);
+}
+function hxCopyPO(){ const p=hxPicked(); if(!p.length){ showToast('⚠ Tick at least one entry'); return; } copyText(p.map(h=>hxPO(h)).join('\n')); showToast('✅ PO numbers copied'); }
+function hxCopyOne(i){ const h=readHist()[i]; if(!h) return; copyText(hxRow(h).join('\t')); showToast('✅ Row copied — '+hxPO(h)); }
+function hxDelSel(){ const n=hxSel.size; if(!n){ showToast('⚠ Tick at least one entry'); return; } if(!confirm(`Delete ${n} selected entr${n>1?'ies':'y'} from history?`)) return;
+  try{ localStorage.setItem('po_all_history', JSON.stringify(readHist().filter((_,i)=>!hxSel.has(i)))); }catch(e){} hxSel.clear(); renderHistory(); showToast('🗑 Deleted'); }
+function loadHistory(i){
+  const h = readHist()[i]; if (!h) return;
+  setMode(h.mode||'reliance', true);
+  rows = h.data; recomputeDup(); lastHeader = h.header||null;
+  if (lastHeader) showRef(lastHeader); else $('refCard').style.display='none';
+  render(true); try{ const po=hxPO(h); if(po) dkFocusSet([po]); }catch(e){}
+  navTo('convert'); setTimeout(()=>$('outputCard').scrollIntoView({behavior:'smooth', block:'start'}),120);
+}
+function deleteHistoryItem(i){ try{ const l=readHist(); l.splice(i,1); localStorage.setItem('po_all_history', JSON.stringify(l)); }catch(e){} hxSel.clear(); renderHistory(); }
+function clearHistory(){
+  if (!confirm('Clear all saved conversion history on this device? This cannot be undone.')) return;
+  try{ localStorage.removeItem('po_all_history'); }catch(e){}
+  hxSel.clear(); renderHistory(); showToast('🗑 History cleared');
+}
+
+// ================= Copy / export =================
+function copyText(t){
+  navigator.clipboard.writeText(t).then(()=>showToast()).catch(()=>{
+    const ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta); showToast();
+  });
+}
+function copyRows(){ if(rows.length) copyText(rows.map(r=>`${r.sku}\t${r.qty}\t${r.price.toFixed(2)}`).join('\n')); }
+function copyCol(f){ if(rows.length) copyText(rows.map(r=>f==='price'?r.price.toFixed(2):r[f]).join('\n')); }
+async function download(blob, name){
+  try{ const d = window.claude && await claude.use('downloads'); if (d){ await d.save({filename:name, data:blob}); return; } }
+  catch(e){ if (e && e.code==='declined') return; }
+  const u=URL.createObjectURL(blob), a=document.createElement('a'); a.href=u; a.download=name; a.click(); URL.revokeObjectURL(u);
+}
+function xlsxSave(wb, name){ download(new Blob([XLSX.write(wb,{bookType:'xlsx',type:'array'})],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}), name); }
+function easyCsv(list,name){
+  const l=list.filter(r=>(r.sku||r.code)&&r.qty); if(!l.length){ showToast('⚠ Nothing to download'); return; }
+  const csv='Sku,Quantity,Price\n'+l.map(r=>`${String(r.sku||r.code).replace(/,/g,' ')},${r.qty},${Number(r.price).toFixed(2)}`).join('\n')+'\n';
+  download(new Blob([csv],{type:'text/csv'}), name); showToast('⬇ EasyEcom CSV downloaded');
+}
+function easyCsvMain(){ const po=((lastHeader&&lastHeader.fields||[]).find(f=>f[0]==='PO Number')||[])[1]||Date.now(); easyCsv(rows,`EasyEcom_${mode}_${String(po).replace(/[^\w-]/g,'')}.csv`); }
+function loCsv(po){ const p=loAll().find(x=>x.po===po); if(p) easyCsv(loRows([p]),`EasyEcom_Purplle_${po}.csv`); }
+function exportCSV(){
+  if (!rows.length) return;
+  const q = s => `"${String(s==null?'':s).replace(/"/g,'""')}"`;
+  const csv = `SKU,${CFG[mode].codeLabel.replace(' ','')},Name,Qty,Price,Amount,Mapped,Duplicate\n` + rows.map(r=>
+    [q(r.sku),q(r.code),q(r.name),q(r.qty),q(r.price.toFixed(2)),q((r.qty*r.price).toFixed(2)),q(r.mapped?'yes':'no'),q(r.dup?'yes':'no')].join(',')).join('\n');
+  download(new Blob([csv],{type:'text/csv'}), `${mode}_punch_${Date.now()}.csv`);
+}
+function exportJSON(){ if(rows.length) download(new Blob([JSON.stringify({mode, header:lastHeader, rows},null,2)],{type:'application/json'}), `${mode}_punch_${Date.now()}.json`); }
+function showToast(m){ const t=$('toast'); t.textContent=m||'✅ Copied!'; t.style.display='block'; setTimeout(()=>t.style.display='none',1500); }
+$('input').addEventListener('paste', ()=>setTimeout(()=>{ if ($('input').value.trim()) convert(); },150));
+
+// ================= Reference panel =================
+let refAll=false, lastRefH=null;
+const REF_KEEP=/^(PO Number|POs combined|PO Date|PO total|Total order value|Delivery date|Delivery location|Ship-to|Dispatch from|Receiving site)/i;
+function showRef(h){
+  lastRefH=h; let k=0; const keep=l=>refAll||REF_KEEP.test(l);
+  const card=(l,v,w)=>`<div class="rcard${w?' wide':''} copyable" style="--k:${k++}" onclick="copyText(this.querySelector('.v').textContent)" title="Click to copy"><div class="l">${esc(l)}</div><div class="v">${esc(v||'—')}</div></div>`;
+  $('refGrid').innerHTML = (h.fields||[]).filter(([l])=>keep(l)).map(([l,v])=>card(l,v,0)).join('')
+    + (h.wide||[]).filter(([l,v])=>v&&keep(l)).map(([l,v])=>card(l,v,1)).join('');
+  $('refTag').textContent = CFG[h.mode] ? CFG[h.mode].tag : '';
+  $('refMore').textContent = refAll ? '▴ Fewer details' : '▾ More details';
+  $('refCard').style.display='block';
+}
+function toggleRefMore(){ refAll=!refAll; if (lastRefH) showRef(lastRefH); }
+const GSTIN_RE = /\b\d{2}[A-Z]{5}\d{4}[A-Z][A-Z0-9]Z[A-Z0-9]\b/g;
+const pick = (s, re) => { const m = s.match(re); return m ? m[1].trim() : ''; };
+
+function extractRelianceHeader(text){
+  const n = text.replace(/\s+/g,' ');
+  const g = [...new Set(n.match(GSTIN_RE)||[])];
+  return { mode:'reliance',
+    fields:[
+      ['PO Number', pick(n,/PO NO\.?\s*:?\s*(\d{6,12})/i)],
+      ['PO Date', pick(n,/PO Date\s*:?\s*(\d{2}\.\d{2}\.\d{4})/i)],
+      ['Site code', pick(n,/Site\s*:\s*([A-Z0-9]{3,8})/)],
+      ['Delivery date', pick(n,/DELIVERY DATE\s*:?\s*(\d{2}\.\d{2}\.\d{4})/i)],
+      ['Total order value', (pick(n,/Total Order Value\s*:?\s*INR\s*([\d,]+\.\d{2})/i)?'₹ ':'')+pick(n,/Total Order Value\s*:?\s*INR\s*([\d,]+\.\d{2})/i)],
+      ['Buyer contact', pick(n,/Buyer\s*:\s*([A-Za-z ]+?)\s+Email/)],
+      ['Vendor code', pick(n,/Vendor Code\s*:\s*(\d+)/i)],
+      ['Supplier GSTIN', g[0]||''],
+      ['Buyer (Reliance) GSTIN', g[1]||''],
+    ],
+    wide:[
+      ['Receiving site', pick(n,/(RRL [A-Za-z ]+?)\s+In accepting/)],
+      ['Delivery location', pick(n,/Delivery Address\s*:\s*(.+?)\s+Tel\s*:/)],
+      ['Buyer email', pick(n,/EMAIL\s*:\s*(\S+@\S+)/)],
+    ]};
+}
+function extract1mgHeader(text){
+  const n = text.replace(/\s+/g,' ');
+  const g = n.match(GSTIN_RE)||[];
+  const combo = n.match(/(\d{2}[A-Z]{5}\d{4}[A-Z][A-Z0-9]Z[A-Z0-9])\s+(\d{4,8})\s+(\d{2}-\d{2}-\d{2,4}\s+\d{2}:\d{2})/);
+  const sg = combo?combo[1]:(g[0]||'');
+  const bg = g.find(x=>x!==sg)||'';
+  const po = n.match(/\b\d{14}\s+(\d{6,8})\b/) || n.match(/(?<![\/\d])(\d{6,8})\s+\d{14}\b/);
+  let ship='';
+  if (combo && bg){ const s=n.indexOf(combo[0])+combo[0].length, e=n.indexOf(bg); if (e>s) ship=n.slice(s,e).replace(/\s+TATA\s*1MG.*$/i,'').trim(); }
+  return { mode:'1mg',
+    fields:[
+      ['PO Number', po?po[1]:''],
+      ['PO Date', combo?combo[3]:pick(n,/(\d{2}-\d{2}-\d{4}\s+\d{2}:\d{2})/)],
+      ['Supplier', 'UNBOTTLE PRIVATE LIMITED'],
+      ['Supplier GSTIN', sg],
+      ['Supplier DL No', combo?combo[2]:''],
+      ['Buyer', 'TATA 1MG Health Care Solutions Private Limited'],
+      ['Buyer GSTIN', bg],
+      ['Buyer DL No', pick(n,/\b([A-Z]{2}\/[A-Z]{2,6}\/[A-Z]{2,6}\/[A-Z]\/\d+)\b/)],
+      ['Buyer FSSAI', pick(n,/\b(\d{14})\b/)],
+    ],
+    wide:[['Ship-to / delivery location (raw, verify against PDF)', ship]]};
+}
+
+function extractFirstcryHeader(text){
+  const n = text.replace(/\s+/g,' ');
+  const g = [...new Set(n.match(GSTIN_RE)||[])];
+  const sub = n.match(/Sub Total\s+(\d+)\s+(\d+)\s+(\d+)\s+([\d,]+\.\d{2})/);
+  return { mode:'firstcry',
+    fields:[
+      ['PO Number', pick(n,/PONO\s*:\s*(\S+)/)],
+      ['PO Date', pick(n,/PO Date\s*:\s*(\d{2}-\d{2}-\d{4})/)],
+      ['PO expiry date', pick(n,/PO Expiry Date\s*:?-?.*?(\d{2}-\d{2}-\d{4})/)],
+      ['Payment terms', pick(n,/Payment Terms\s*:\s*(.+?)\s+Address\s*:/)],
+      ['Vendor (you)', pick(n,/Vendor Name\s*:\s*(.+?)\s+PONO/)],
+      ['Supplier GSTIN', g[0]||''],
+      ['Buyer', pick(n,/Delivered To\s*:\s*(.+?)\s+GST Number/)],
+      ['Buyer GSTIN', g[1]||''],
+      ['PO total (qty · value)', sub ? `${sub[3]} pcs · ₹ ${sub[4]}` : ''],
+    ],
+    wide:[
+      ['Dispatch from (Delivered By)', pick(n,/Delivered By\s*:.*?Address\s*:\s*(.+?)\s+PO Expiry/)],
+      ['Delivery location (Delivered To)', pick(n,/Delivered To\s*:.*?Address\s*:\s*(.+?)\s+Currency/)],
+    ]};
+}
+function extractLofoodsHeader(text){
+  const n = text.replace(/\s+/g,' ');
+  const g = [...new Set(n.match(GSTIN_RE)||[])];
+  const buyerG = g.find(x=>/AARCM/.test(x)) || g[0] || '', suppG = g.find(x=>x!==buyerG) || '';
+  const tot = n.match(/\bTotal\s+(\d+)\s+([\d,]+\.\d{2})\s+([\d,]+\.\d{2})\s+([\d,]+\.\d{2})/);
+  const po = n.match(/PO Number[\s:]*(\d{8,12})/i) || n.match(/\b(4[23]\d{8})\b/);
+  const dt = n.match(/PO Number[\s:]*\d{8,12}.*?(\d{2}\.\d{2}\.\d{4})/i) || n.match(/\b(\d{2}\.\d{2}\.\d{4})\b/);
+  const win = n.match(/between\s+(\d{1,2}:\d{2}\s*[AP]M\s*-\s*\d{1,2}:\d{2}\s*[AP]M)/i);
+  return { mode:'purplle',
+    fields:[
+      ['PO Number', po?po[1]:''],
+      ['PO Date', dt?dt[1]:''],
+      ['Payment terms', pick(n,/Payment Terms\s*:\s*(.+?)(?:\s+This is|\s+Please quote|$)/)],
+      ['Supplier', 'UNBOTTLE PRIVATE LIMITED'],
+      ['Supplier GSTIN', suppG],
+      ['Buyer', 'MANASH E-COMMERCE PRIVATE LTD (Purplle)'],
+      ['Buyer GSTIN', buyerG],
+      ['PO total (qty · value)', tot ? `${tot[1]} pcs · ₹ ${tot[4]}` : ''],
+      ['Delivery window', win ? win[1].replace(/\s+/g,' ')+' (appointment needed)' : '09:00 AM - 03:30 PM (appointment needed)'],
+    ],
+    wide:[
+      ['Delivery location', pick(n,/Delivery Address\s*:\s*(.+?)\s+State Code/)],
+      ['Invoice rule', 'One invoice = one PO (a PO can have many invoices). Print MRP on invoice / packing list.'],
+      ['Dispatch pack', 'Delivery challan in triplicate + duplicate invoice copy + packing list. Write PO no. & invoice details on every box.'],
+      ['Before shipping', 'Flag any MRP / description / grammage / shelf-life mismatch against the PO in reply to the auto mail.'],
+    ]};
+}
+// ================= PDF item extraction =================
+function extractLofoodsItems(text){
+  const n = text.replace(/\s+/g,' ');
+  const re = /\b(\d{1,3})\s+PPLB(\d{13})\s+(.*?)\s*(\d{13})\s+([\d,]+\.\d{2})\s+(\d{8})\s+EA\s+(\d+)\s+([\d,]+\.\d{2})\s+([\d.]+)\s+([\d,]+)\s+([\d.]+)\s+([\d,]+)\s+([\d,]+(?:\.\d{2})?)(?=\s|$)/g;
+  const out=[]; let m;
+  while ((m=re.exec(n))!==null){
+    const qty=toNum(m[7]), rate=toNum(m[8]), amt=toNum(m[13]);
+    out.push({ code:m[4], name:m[3].trim(), qty, mrp:toNum(m[5]), main:rate, gstPct:toNum(m[9])+toNum(m[11]),
+               incl: Math.round(rate*(1+(toNum(m[9])+toNum(m[11]))/100)*100)/100, amt });
+  }
+  return out;
+}
+function extractRelianceItems(text){
+  const n = text.replace(/\s+/g,' ');
+  const re = /\b(\d{1,3})\s+(\d{6,10})\s+(\d{6,8})\s+(\d{8,14})\s+([A-Z0-9 ,.\-\/&]+?)\s+(\d{2}\.\d{2}\.\d{4})\s+([A-Z0-9]{2,8})\s+([\d,]+\.\d{3})\s+EA\s+([\d,]+\.\d{2})\s+([\d,]+\.\d{2})\s+([\d.]+)\s+([\d.]+)\b/g;
+  const out=[]; let m;
+  while ((m=re.exec(n))!==null){
+    const base = toNum(m[10]), gstPct = toNum(m[11]) + toNum(m[12]);
+    const exTax = gstPct ? base/(1+gstPct/100) : base;
+    out.push({ code:m[4], name:m[5].trim(), qty:toNum(m[8]), mrp:toNum(m[9]), main:base, gstPct, exTax: Math.round(exTax*100)/100 });
+  }
+  return out;
+}
+function extractFirstcryItems(text){
+  const n = text.replace(/\s+/g,' ');
+  const re = /\b(\d{1,3})\s+(\d{8})\s+(.+?)\s+(\d+\.\d{2})\s+(\d+\.\d{2})\s+(\d+\.\d{2})\s+(\d+\.\d{2})\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\.\d{2})(?=\s+(?:\d{1,3}\s+\d{8}\s|Sub Total|Sr No))/g;
+  const out=[]; let m;
+  while ((m=re.exec(n))!==null){
+    const tok = m[3].split(' '); let i=0, D='';
+    while (i<tok.length && /^\d+$/.test(tok[i])) D += tok[i++];      // HSN + EAN + Style Code cells (wrapped across lines)
+    const ean = D.length>=21 ? D.slice(8,21) : '', style = D.length>21 ? D.slice(21) : '';
+    out.push({ code:m[2], ean, style, name:tok.slice(i).join(' ').slice(0,70), mrp:toNum(m[4]), base:toNum(m[5]), main:toNum(m[7]), qty:toNum(m[10]), amt:toNum(m[11]) });
+  }
+  return out;
+}
+function extract1mgItems(text){
+  const n = text.replace(/\s+/g,' ');
+  const re = /\b(\d{1,3})\s+(\d{6,8})\s+(\d{6,8})\s+(.+?)\s+(\d{1,4})\s+(\d{1,4})\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?=\s+\d{1,3}\s+\d{6,8}\s+\d{6,8}\s|\s+TOTAL\b)/g;
+  const out=[]; let m;
+  while ((m=re.exec(n))!==null) out.push({ code:m[2], name:m[4].trim(), qty:toNum(m[6]), mrp:toNum(m[8]), main:toNum(m[10]) });
+  return out;
+}
+function detectMode(t){
+  if (/manash/i.test(t) || /purplle/i.test(t)) return 'purplle';
+  if (/\bFCID\b/.test(t) && /Style Code/i.test(t)) return 'firstcry';
+  if (/purchase order note/i.test(t) || /\b1mg\b/i.test(t)) return '1mg';
+  if (/reliance retail/i.test(t)) return 'reliance';
+  return null;
+}
+// Compare extracted items against the totals printed on the PDF
+function verify(text, items){
+  const n = text.replace(/\s+/g,' '), parts = [];
+  const sumQty = items.reduce((s,i)=>s+i.qty,0), sumVal = items.reduce((s,i)=>s+(i.amt!=null?i.amt:i.qty*i.main),0);
+  const chk = (label, got, want, tolPct) => {
+    if (!want) return;
+    const ok = Math.abs(got-want) <= want*tolPct/100 + 0.01;
+    parts.push(`<span class="${ok?'status-ok':'status-warn'}">${ok?'✔':'⚠'} ${label}: ${got.toLocaleString('en-IN',{maximumFractionDigits:2})} vs PDF ${want.toLocaleString('en-IN',{maximumFractionDigits:2})}</span>`);
+  };
+  if (mode==='purplle'){
+    const st = n.match(/\bTotal\s+(\d+)\s+([\d,]+\.\d{2})\s+([\d,]+\.\d{2})\s+([\d,]+\.\d{2})/);
+    if (st){ chk('Qty', sumQty, toNum(st[1]), 0); chk('Amount (incl. GST)', sumVal, toNum(st[4]), 0.1); }
+  } else if (mode==='reliance'){
+    chk('Qty', sumQty, toNum(pick(n,/Grand Total of Qty\s*([\d,]+(?:\.\d+)?)/i)), 0);
+    chk('Base value', sumVal, toNum(pick(n,/TOTAL BASIC VALUE\s*INR\s*([\d,]+\.\d{2})/)), 0.5);
+  } else if (mode==='firstcry'){
+    const st = n.match(/Sub Total\s+(\d+)\s+(\d+)\s+(\d+)\s+([\d,]+\.\d{2})/);
+    if (st){ chk('Qty', sumQty, toNum(st[3]), 0); chk('Amount', sumVal, toNum(st[4]), 0.5); }
+  } else {
+    chk('Value', sumVal, toNum(pick(n,/\bTOTAL\s+([\d,]+\.\d{2})\b/)), 0.5);
+  }
+  const mappedCount = items.length - items.filter(it=>!(getFullMapping()[it.code])).length;
+  const mapOk = mappedCount === items.length;
+  parts.unshift(`<span class="${mapOk?'status-ok':'status-warn'}">${mapOk?'✔':'⚠'} SKU mapping: ${mappedCount}/${items.length} matched</span>`);
+  return parts.join(' · ');
+}
+
+// ================= PDF upload =================
+const dz=$('dropZone'), pin=$('pdfInput'), ps=$('pdfStatus');
+dz.addEventListener('click', ()=>pin.click());
+dz.addEventListener('dragover', e=>{ e.preventDefault(); dz.style.borderColor='var(--accent)'; });
+dz.addEventListener('dragleave', ()=>dz.style.borderColor='var(--border)');
+dz.addEventListener('drop', e=>{ e.preventDefault(); dz.style.borderColor='var(--border)'; if (e.dataTransfer.files.length>1) handleBatch([...e.dataTransfer.files]); else if (e.dataTransfer.files.length) handlePdf(e.dataTransfer.files[0]); });
+pin.addEventListener('change', e=>{ if (e.target.files.length>1) handleBatch([...e.target.files]); else if (e.target.files.length) handlePdf(e.target.files[0]); });
+
+let lastItems = null, lastItemsMode = null, lastFullText = null;
+function priceFor(it, src){
+  if (mode==='purplle') return src==='mrp' ? it.mrp : (src==='incl' ? it.incl : it.main);
+  if (mode==='reliance') return src==='mrp' ? it.mrp : (src==='extax' ? it.exTax : it.main);
+  return src==='mrp' ? it.mrp : (src==='base' && it.base!=null ? it.base : it.main);
+}
+function applyPricingAndRender(){
+  const map = getFullMapping(), src = $('priceSource').value;
+  rows = mergeDuplicates(lastItems.map(it=>{
+    const r = mk(map, it.code, mode==='firstcry' ? '' : it.name, it.qty, priceFor(it, src), {ean:it.ean, style:it.style});
+    if (!r.name) r.name = it.name || '';
+    return r;
+  }));
+  render();
+}
+function onPriceSourceChange(){
+  if (mode==='purplle' && typeof renderLoBatch==='function') renderLoBatch();
+  if (lastItems && lastItems.length && lastItemsMode===mode){
+    applyPricingAndRender();
+    showToast('💰 Prices updated — ' + ($('priceSource').selectedOptions[0]?.textContent || ''));
+  } else if ($('input').value.trim()){
+    convert();
+  }
+}
+async function handlePdf(file){
+  if (!file.type.includes('pdf') && !file.name.toLowerCase().endsWith('.pdf')){ ps.textContent='⚠️ Please choose a PDF file.'; return; }
+  ps.innerHTML='<div class="skel" style="width:70%"></div><div class="skel" style="width:45%"></div>';
+  $('dropLabel').textContent='📄 '+file.name;
+  $('pdfActions').style.display='flex';
+  try{
+    _pdfBlobUrl && URL.revokeObjectURL(_pdfBlobUrl);
+    _pdfBlobUrl = URL.createObjectURL(file);
+    $('pdfFrame').src = _pdfBlobUrl;
+    const pdf = await pdfjsLib.getDocument({data: await file.arrayBuffer()}).promise;
+    let full='';
+    for (let p=1;p<=pdf.numPages;p++){
+      const c = await (await pdf.getPage(p)).getTextContent();
+      full += c.items.map(i=>i.str).join(' ') + '\n';
+    }
+    const det = detectMode(full);
+    let switched = '';
+    if (det && det!==mode){ setMode(det); switched = ` (auto-detected ${CFG[det].tag})`; }
+    else if (det) { $('refCard').style.display='none'; }
+
+    const items = mode==='purplle' ? extractLofoodsItems(full) : mode==='reliance' ? extractRelianceItems(full) : mode==='firstcry' ? extractFirstcryItems(full) : extract1mgItems(full);
+    lastHeader = mode==='purplle' ? extractLofoodsHeader(full) : mode==='reliance' ? extractRelianceHeader(full) : mode==='firstcry' ? extractFirstcryHeader(full) : extract1mgHeader(full);
+    showRef(lastHeader);
+    if (!items.length){
+      ps.textContent = `⚠️ Found PO details but no line-item table${switched}. The layout may differ from the standard ${CFG[mode].tag} template — try the paste box below.`;
+      return;
+    }
+    lastItems = items; lastItemsMode = mode; lastFullText = full;
+    applyPricingAndRender();
+    ps.innerHTML = `✅ Extracted ${items.length} line item${items.length===1?'':'s'} from ${pdf.numPages} page${pdf.numPages===1?'':'s'}${esc(switched)}.<br>${verify(full, items)}`;
+    if (mode==='purplle'){ const prev = ps.innerHTML; await handleBatch([file]); ps.innerHTML = prev + '<br>' + ps.innerHTML; }
+  }catch(err){
+    console.error(err);
+    ps.textContent = '⚠️ Could not read that PDF ('+(err.message||'unknown error')+'). Try pasting the data instead.';
+  }
+}
+function removePdf(){
+  pin.value=''; $('dropLabel').textContent='📄 Click to choose a PDF, or drag one here'; ps.textContent='';
+  $('pdfActions').style.display='none';
+}
+
+
+// ================= PRO: animation + dashboard =================
+const PAL=['#22b8cf','#f5a300','#e5484d','#7c5cff','#00d4aa','#ff7ab8','#8bc34a','#ff8a3d'];
+const inr=v=>'₹'+Number(v).toLocaleString('en-IN',{maximumFractionDigits:0});
+const inr2=v=>'₹'+Number(v).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtC=v=>v>=1e7?'₹'+(v/1e7).toFixed(2)+' Cr':v>=1e5?'₹'+(v/1e5).toFixed(2)+' L':inr(v);
+function countUp(el,to,fmt){
+  const from=parseFloat(el.dataset.v)||0; el.dataset.v=to;
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches){ el.textContent=fmt(to); return; }
+  const t0=performance.now(), d=700;
+  (function f(t){ const k=Math.min(1,(t-t0)/d), e=1-Math.pow(1-k,3); el.textContent=fmt(from+(to-from)*e); if(k<1) requestAnimationFrame(f); })(t0);
+}
+const raf2=fn=>requestAnimationFrame(()=>requestAnimationFrame(fn));
+function renderDash(){
+  const card=$('dashCard');
+  if (!rows.length){ card.style.display='none'; return; }
+  card.style.display='block';
+  $('dashSub').textContent=CFG[mode].tag;
+  const items=rows.map(r=>({...r,val:r.qty*r.price})).filter(r=>r.qty>0);
+  const tv=items.reduce((s,r)=>s+r.val,0)||1;
+  const byVal=[...items].sort((a,b)=>b.val-a.val), byQty=[...items].sort((a,b)=>b.qty-a.qty);
+  // donut
+  const segs=byVal.slice(0,6).map((r,i)=>({l:r.sku,v:r.val,c:PAL[i]}));
+  const rest=byVal.slice(6).reduce((s,r)=>s+r.val,0); if (rest>0) segs.push({l:'Others',v:rest,c:'#6b7280'});
+  const R=54, C=2*Math.PI*R; let acc=0;
+  const circ=segs.map(s=>{ const len=s.v/tv*C;
+    const o=`<circle class="seg" cx="70" cy="70" r="${R}" fill="none" stroke="${s.c}" stroke-width="16" data-len="${len}" style="stroke-dasharray:0 ${C};stroke-dashoffset:${-acc}"><title>${esc(s.l)} · ${inr(s.v)} (${(s.v/tv*100).toFixed(1)}%)</title></circle>`;
+    acc+=len; return o; }).join('');
+  $('donut').innerHTML=`<svg viewBox="0 0 140 140" class="donut"><circle cx="70" cy="70" r="${R}" fill="none" stroke="var(--panel)" stroke-width="16"/><g transform="rotate(-90 70 70)">${circ}</g><text x="70" y="66" text-anchor="middle" class="dl">TOTAL</text><text x="70" y="84" text-anchor="middle" class="dv">${fmtC(tv)}</text></svg>
+    <div class="legend">${segs.map(s=>`<div><i style="background:${s.c}"></i>${esc(s.l)}<b>${(s.v/tv*100).toFixed(0)}%</b></div>`).join('')}</div>`;
+  // bars
+  const top=byQty.slice(0,8), mx=top[0]?top[0].qty:1;
+  $('bars').innerHTML=top.map((r,i)=>`<div class="brow" title="${esc(r.name)}"><span class="bl">${esc(r.sku)}</span><div class="btrack"><div class="bfill" data-w="${(r.qty/mx*100).toFixed(1)}" style="background:${PAL[i%8]};width:0"></div></div><span class="bv">${r.qty}</span></div>`).join('');
+  // insights
+  const un=rows.filter(r=>!r.mapped).length, du=rows.filter(r=>r.dup).length, ck=rows.filter(r=>r.warn).length;
+  const pct=Math.round((rows.length-un)/rows.length*100), RR=26, C2=2*Math.PI*RR, col=pct===100?'var(--accent2)':'var(--warn)';
+  const tq=items.reduce((s,r)=>s+r.qty,0)||1, t1=byVal[0], b1=byQty[0];
+  $('insights').innerHTML=`<div class="ringwrap"><svg width="64" height="64" viewBox="0 0 64 64" class="ring"><circle cx="32" cy="32" r="${RR}" fill="none" stroke="var(--panel)" stroke-width="7"/><circle class="arc" data-len="${C2*pct/100}" cx="32" cy="32" r="${RR}" fill="none" stroke="${col}" stroke-width="7" stroke-linecap="round" transform="rotate(-90 32 32)" style="stroke-dasharray:0 ${C2}"/></svg><div><b>${pct}%</b>SKUs mapped</div></div>
+    <div class="stat"><span>Top value</span><b>${t1?esc(t1.sku)+' · '+fmtC(t1.val):'—'}</b></div>
+    <div class="stat"><span>Biggest qty</span><b>${b1?esc(b1.sku)+' · '+b1.qty:'—'}</b></div>
+    <div class="stat"><span>Avg unit price</span><b>${inr2(tv/tq)}</b></div>
+    <div class="stat"><span>Needs attention</span><b style="color:${un+du+ck?'var(--warn)':'var(--accent2)'}">${un+du+ck?`${un} unmapped · ${du} dup · ${ck} check`:'All clear ✔'}</b></div>`;
+  raf2(()=>{
+    document.querySelectorAll('#donut .seg').forEach(c=>{ c.style.strokeDasharray=`${Math.max(0,parseFloat(c.dataset.len)-1.5)} ${C}`; });
+    document.querySelectorAll('#bars .bfill').forEach((b,i)=>{ b.style.transitionDelay=(i*60)+'ms'; b.style.width=b.dataset.w+'%'; });
+    document.querySelectorAll('#insights .arc').forEach(a=>{ a.style.strokeDasharray=`${a.dataset.len} ${C2}`; });
+  });
+}
+function renderHistDash(l){
+  const tv=l.reduce((s,h)=>s+h.value,0), tq=l.reduce((s,h)=>s+h.qty,0), by={};
+  l.forEach(h=>by[h.mode]=(by[h.mode]||0)+1);
+  const pts=[...l].reverse().map(h=>h.value), mx=Math.max(...pts,1), n=pts.length;
+  const xy=pts.map((v,i)=>`${(n>1?i/(n-1)*216:108)+2},${44-(v/mx)*38}`).join(' ');
+  $('histDash').innerHTML=`<div class="mini">
+    <div class="tcard"><div class="l">Conversions</div><div class="v">${l.length}</div></div>
+    <div class="tcard"><div class="l">Value processed</div><div class="v">${fmtC(tv)}</div></div>
+    <div class="tcard"><div class="l">Pieces</div><div class="v">${tq.toLocaleString('en-IN')}</div></div>
+    <div class="tcard"><div class="l">Value trend</div><svg class="spark" viewBox="0 0 220 46" preserveAspectRatio="none"><polyline points="${xy}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/></svg></div></div>
+    <div>${Object.entries(by).map(([m,c])=>`<span class="chip" style="background:${FAV_COLORS[m]||'#888'}">${esc(CFG[m]?CFG[m].tag:m)} · ${c}</span>`).join('')}</div>`;
+}
+function shareSummary(){
+  if (!rows.length) return;
+  const po=(lastHeader&&lastHeader.fields&&(lastHeader.fields.find(f=>f[0]==='PO Number')||[])[1])||'';
+  const tq=rows.reduce((s,r)=>s+r.qty,0), tv=rows.reduce((s,r)=>s+r.qty*r.price,0);
+  const top=[...rows].sort((a,b)=>b.qty*b.price-a.qty*a.price).slice(0,3).map(r=>`• ${r.sku} ×${r.qty} = ${inr2(r.qty*r.price)}`).join('\n');
+  const txt=`📦 ${CFG[mode].tag} PO${po&&po!=='—'?' '+po:''}\n${rows.length} SKUs · ${tq} pcs · ${inr2(tv)}\nTop lines:\n${top}`;
+  if (navigator.share) navigator.share({title:'PO summary',text:txt}).catch(()=>copyText(txt)); else copyText(txt);
+}
+
+// ================= Send to Google Sheet (Apps Script web app) =================
+const gsGet=()=>{ try{ return {url:localStorage.getItem('po_gs_url')||'', key:localStorage.getItem('po_gs_key')||''}; }catch(e){ return {url:'',key:''}; } };
+function gsInit(){ gsLogRender(); const c=gsGet(); if($('gsUrl')){ $('gsUrl').value=c.url; $('gsKey').value=c.key; } }
+function gsSave(){ try{ localStorage.setItem('po_gs_url',$('gsUrl').value.trim()); localStorage.setItem('po_gs_key',$('gsKey').value.trim()); }catch(e){} showToast('💾 Sheet link saved'); }
+function gsClear(){ try{ localStorage.removeItem('po_gs_url'); localStorage.removeItem('po_gs_key'); }catch(e){} $('gsUrl').value=''; $('gsKey').value=''; showToast('Sheet link removed'); }
+const gsLogGet=()=>{ try{ return JSON.parse(localStorage.getItem('po_sync_log')||'[]'); }catch(e){ return []; } };
+function gsLog(o){ if(o.ok&&!(o.pos||[]).includes('test')) setTimeout(()=>{ try{ confetti(); }catch(e){} },50); try{ const l=gsLogGet(); l.unshift(Object.assign({t:Date.now()},o)); localStorage.setItem('po_sync_log',JSON.stringify(l.slice(0,100))); }catch(e){} gsLogRender(); }
+function gsLogRender(){ const l=gsLogGet(), c=$('gsChip'), box=$('gsLog'), u=gsGet().url;
+  if(c){ const x=l[0]; c.className='chip '+(!u?'':x?(x.ok?'ok':'bad'):''); c.textContent=!u?'● Sheet not connected':x?(x.ok?'● Synced '+new Date(x.t).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}):'● Sync failed'):'● Connected'; }
+  if(box) box.innerHTML=l.length?l.slice(0,15).map(x=>`<div class="gs-r ${x.ok?'ok':'bad'}"><b>${new Date(x.t).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</b> ${x.ok?`✅ ${(x.added||[]).length} added, ${(x.updated||[]).length} updated`:'❌ '+esc(x.err||'failed')} <span>${esc([...(x.added||[]),...(x.updated||[]),...(x.pos||[])].slice(0,4).join(', '))}</span></div>`).join(''):'<div class="hx-empty">No syncs yet.</div>'; }
+async function gsCall(url,key,rows){
+  const body=JSON.stringify({key,rows});
+  try{ const r=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body}); return await r.json(); }
+  catch(e){ const r=await fetch(url+'?data='+encodeURIComponent(btoa(unescape(encodeURIComponent(body))))); return await r.json(); }   // safe: the script upserts by PO
+}
+async function gsTest(){ const {url,key}=gsGet(); if(!url){ showToast('⚠ Paste the Web-app URL first'); return; }
+  try{ const j=await (await fetch(url+'?ping=1&key='+encodeURIComponent(key))).json(); alert(j.ok?`✅ Connected\nTab: ${j.tab}\nNext free row: ${j.next}`:'❌ '+j.error); gsLog({ok:!!j.ok,err:j.error,pos:['test']}); }
+  catch(e){ alert('❌ Cannot reach the web app.\n• URL must be the …/exec Web-app URL\n• Deploy → access "Anyone"\n• After editing the script: Deploy → Manage deployments → Edit → New version'); gsLog({ok:false,err:'Cannot reach web app',pos:['test']}); } }
+async function gsSend(rows){
+  const {url,key}=gsGet();
+  if(url&&!/^https:\/\/script\.google(usercontent)?\.com\/macros\/s\/.+\/exec/.test(url)){ $('gsBox').open=true; alert('❌ This is not the Apps Script Web-app URL.\n\nIt must look like:\nhttps://script.google.com/macros/s/…/exec\n\nA Google Sheet link (docs.google.com/spreadsheets…) will not work.'); return false; }
+  if(!url||!key){ $('gsBox').open=true; $('gsBox').scrollIntoView({behavior:'smooth',block:'center'}); showToast('⚠ Add your Sheet URL + key first'); return false; }
+  if(!rows.length){ showToast('⚠ Nothing to send'); return false; }
+  const pr=rows.map(r=>r.map((x,i)=>(i===7||i===8||i===9)&&x!==''&&!isNaN(x)?Number(x):(x==null?'':x))), pos=pr.map(r=>r[1]);
+  showToast('🔄 Updating Master… '+pr.length+' PO(s)');
+  try{ const j=await gsCall(url,key,pr);
+    if(!j.ok){ gsLog({ok:false,err:j.error,pos}); alert('❌ Sheet replied: '+j.error); return false; }
+    gsLog({ok:true,added:j.added,updated:j.updated,pos}); showToast(`✅ Master updated — ${j.added.length} new, ${(j.updated||[]).length} updated`); return true; }
+  catch(e){ gsLog({ok:false,err:'Cannot reach web app',pos}); alert('❌ Could not reach the Master Sheet script.\nClick "🧪 Test connection" in the 🔗 Google Sheet link box for the exact check.'); return false; }
+}
+async function rcSend(){
+  const g=k=>($(RC[k]).value||'').replace(/\s+/g,' ').trim(), num=x=>String(x).replace(/[₹,\s]/g,'');
+  const row=[g('date'),g('po'),g('chan'),canonOf(g('zone'),ZONES),canonOf(g('wh'),WHS),g('to'),g('trans'),num(g('val')),num(g('qty')),g('boxes')];
+  if(!row[1]){ showToast('⚠ Enter the PO number first'); return; }
+  if(await gsSend([row])) bkLog(mode,row[1],num(g('qty')),num(g('val')),rows.length);
+}
+async function hxSend(){ const p=hxPicked(); if(!p.length){ showToast('⚠ Tick at least one entry'); return; } if(await gsSend(p.map(hxRow))) p.forEach(h=>{ const r=hxRow(h); bkLog(h.mode,r[1],h.qty,r[7],h.skus); }); }
+async function loSend(){ if(!loSel||!loSel.size){ showToast('⚠ Tick at least one PO'); return; } const l=loSelected(); if(await gsSend(l.map(loSheetRow))) l.forEach(x=>bkLog('purplle',x.po,x.qty,x.val,x.items.length)); }
+document.addEventListener('DOMContentLoaded', gsInit);
+
+// ================= Dispatch Desk =================
+const DK_ST=['Punched','Packing asked','Packed','Label shared','Done'], DK_COL=['#7c8cff','#ffb020','#2ec4b6','#a66cff','#6b7280'];
+const dkDef=()=>({items:[],next:'',tags:{},ltag:'@',boxes:false});
+const dkLoad=()=>{ try{ const d=Object.assign(dkDef(),JSON.parse(localStorage.getItem('po_desk')||'{}')); if(!d.v2){ d.tags={}; d.v2=1; } return d; }catch(e){ return dkDef(); } };
+const dkSave=d=>{ try{ localStorage.setItem('po_desk',JSON.stringify(d)); }catch(e){} };
+const dkBoxes=po=>{ const it=dkLoad().items.find(x=>x.po===po); return it&&it.boxes?it.boxes:''; };
+let dkF=-1, dkFocus=new Set(); const dkSel=new Set();
+const dkMatch=x=>dkF===-2?dkFocus.has(x.po):dkF===-1?x.stage<4:x.stage===dkF;
+function dkEnsure(o){ const d=dkLoad(); let x=d.items.find(i=>i.po===o.po); if(!x) d.items.push(Object.assign({addr:'',stage:0,boxes:'',row:'',t:[Date.now()],zone:'',wh:'',to:'',val:0,qty:0},o)); else if(!x.wh) x.wh=o.wh||''; dkSave(d); }
+function dkFocusSet(l){ dkFocus=new Set(l); dkF=-2; dkSel.clear(); l.forEach(p=>dkSel.add(p)); try{ dkSync(); }catch(e){} dkRender(); }
+const poFix=x=>{ x=x.toLowerCase(); return /^pin/.test(x)?'pin'+x.slice(3,12).replace(/o/g,'0').replace(/[li]/g,'1')+x.slice(12):x; };
+function dkSync(){ const d=dkLoad(); let ch=false;
+  readHist().slice().reverse().forEach(h=>{ const r=hxRow(h), po=r[1]; if(!po||d.items.some(x=>x.po===po)) return;
+    const w=((h.header&&h.header.wide)||[]).find(f=>f[0]==='Dispatch from (Delivered By)');
+    d.items.push({po,chan:r[2],wh:r[4],zone:r[3],to:r[5],val:+r[7]||0,qty:+r[8]||0,addr:w?String(w[1]).replace(/\s+/g,' ').trim():'',stage:0,boxes:'',row:'',t:[Date.now()]}); ch=true; });
+  if(ch) dkSave(d); dkRender();
+}
+function dkParse(text){ const d=dkLoad(); let n=0;
+  String(text).split(/\n/).forEach(line=>{ (line.match(/pin[a-z0-9]{12,18}|\b4[23]\d{8}\b/gi)||[]).forEach(m=>{ const po=poFix(m); if(d.items.some(x=>x.po===po)) return;
+    const rw=line.match(/(?:^|\s)(\d{3,6})\s*[-–:.]\s*(?=pin|4[23]\d{8})/i);
+    d.items.push({po,chan:/^pin/.test(po)?'FirstCry':'Purplle',wh:'',zone:'',to:'',val:0,qty:0,addr:'',stage:0,boxes:'',row:rw?rw[1]:'',t:[Date.now()]}); n++; }); });
+  dkSave(d); dkRender(); $('dkMsg').textContent=n?`✅ ${n} PO(s) added — please check the numbers and set the warehouse.`:'No new PO numbers found in that text.';
+}
+async function dkOcr(file){
+  $('dkMsg').textContent='🔎 Reading screenshot… (first time takes a few seconds)';
+  try{ if(!window.Tesseract) await new Promise((ok,no)=>{ const e=document.createElement('script'); e.src='https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.1.0/tesseract.min.js'; e.onload=ok; e.onerror=no; document.head.appendChild(e); });
+    const r=await Tesseract.recognize(file,'eng'); dkParse(r.data.text); $('dkMsg').textContent+=' (read from screenshot — verify each PO)'; }
+  catch(e){ $('dkMsg').textContent='⚠ Screenshot reading is unavailable here — paste the PO text instead.'; }
+}
+const dkIST=()=>new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata',weekday:'short',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});
+const dkAge=ms=>{ const m=Math.max(0,Math.round((Date.now()-ms)/60000)); return m<60?m+'m':Math.floor(m/60)+'h '+(m%60)+'m'; };
+function dkRender(){
+  if(!$('dkList')) return; const d=dkLoad(), it=d.items, act=it.filter(x=>x.stage<4), td=new Date().toDateString();
+  const cnt=DK_ST.map((_,i)=>it.filter(x=>x.stage===i).length), today=it.filter(x=>new Date(x.t[0]).toDateString()===td);
+  const late=act.filter(x=>x.stage<3&&Date.now()-x.t[x.t.length-1]>4*3600e3).length;
+  const K=[['Punched today',today.length,'#7c8cff'],['Value today','₹'+today.reduce((a,x)=>a+x.val,0).toLocaleString('en-IN',{maximumFractionDigits:0}),'#2ec4b6'],['Pcs today',today.reduce((a,x)=>a+x.qty,0),'#ffb020'],['Awaiting packing',cnt[0]+cnt[1],'#ff7a59'],['Packed · label due',cnt[2],'#a66cff'],['Waiting > 4h',late,late?'#e5484d':'#6b7280']];
+  $('dkKpi').innerHTML=K.map(k=>`<div class="dk-k" style="--c:${k[2]}"><b>${k[1]}</b><span>${k[0]}</span></div>`).join('');
+  const tot=it.length||1; $('dkPipe').innerHTML=cnt.map((c,i)=>`<i title="${DK_ST[i]}: ${c}" style="width:${c/tot*100}%;background:${DK_COL[i]}"></i>`).join('');
+  $('dkTabs').innerHTML=(dkFocus.size?[[-2,'🎯 Current PO',it.filter(x=>dkFocus.has(x.po)).length]]:[]).concat([[-1,'Active',act.length]],DK_ST.map((n,i)=>[i,n,cnt[i]])).map(([i,n,c])=>`<span class="hx-tab ${dkF===i?'on':''}" onclick="dkF=${i};dkRender()">${n} · ${c}</span>`).join('');
+  $('dkTags').innerHTML=WHS.map(w=>`<label>Packing tag · ${w}<br><input class="dk-in" style="width:210px" value="${esc(d.tags[w]||'')}" placeholder="@" onchange="dkTag('${w}',this.value)"></label>`).join('')+`<label>Label tag<br><input class="dk-in" style="width:250px" value="${esc(d.ltag)}" onchange="dkLtag(this.value)"></label><label><br><input type="checkbox" ${d.boxes?'checked':''} onchange="dkBx(this.checked)"> add box count in label msg</label>`;
+  const sh=it.map((x,i)=>[x,i]).filter(([x])=>dkMatch(x));
+  $('dkCount').textContent=`${sh.length} shown · ${[...dkSel].length} selected`; $('dkAll').checked=sh.length>0&&sh.every(([x])=>dkSel.has(x.po));
+  $('dkList').innerHTML=sh.length?sh.map(([x,i])=>`<div class="hx-item ${dkSel.has(x.po)?'sel':''} ${x.stage<3&&Date.now()-x.t[x.t.length-1]>4*3600e3?'late':''}" style="--c:${DK_COL[x.stage]};flex-wrap:wrap">
+    <input type="checkbox" ${dkSel.has(x.po)?'checked':''} onchange="dkPick('${x.po}',this.checked)">
+    <div class="hx-main"><div class="hx-top"><span class="hx-po">${esc(x.po)}</span><span class="dk-st" style="--c:${DK_COL[x.stage]}">${DK_ST[x.stage]}</span><span class="hx-date">${esc(x.chan)} · ⏱ ${dkAge(x.t[x.t.length-1])}</span></div><div class="hx-sub">${esc(x.to||'—')}${x.qty?` · ${x.qty} pcs · ₹${x.val.toLocaleString('en-IN')}`:''}</div><div class="dk-steps">${DK_ST.slice(0,4).map((n,k)=>`<i class="${k<=x.stage?'on':''}" title="${n}"></i>`).join('')}</div></div>
+    <select class="dk-in" onchange="dkSet(${i},'wh',this.value)"><option value="">WH?</option>${WHS.map(w=>`<option ${x.wh===w?'selected':''}>${w}</option>`).join('')}</select>
+    <input class="dk-in" style="width:62px" placeholder="boxes" value="${esc(x.boxes)}" onchange="dkSet(${i},'boxes',this.value)">
+    <input class="dk-in" style="width:70px" placeholder="sheet row" value="${esc(x.row)}" onchange="dkSet(${i},'row',this.value)"></div>`).join(''):'<div class="hx-empty">Nothing here yet — punch a PO or paste PO numbers above.</div>';
+}
+const dkTag=(w,v)=>{ const d=dkLoad(); d.tags[w]=v.trim(); dkSave(d); }, dkLtag=v=>{ const d=dkLoad(); d.ltag=v.trim(); dkSave(d); }, dkBx=v=>{ const d=dkLoad(); d.boxes=v; dkSave(d); };
+function dkSet(i,k,v){ const d=dkLoad(), x=d.items[i]; x[k]=v.trim(); if(k==='boxes'&&x.boxes&&x.stage<2){ x.stage=2; x.t[2]=Date.now(); } dkSave(d); dkRender(); }
+const dkPick=(po,on)=>{ on?dkSel.add(po):dkSel.delete(po); dkRender(); };
+function dkSelAll(on){ const d=dkLoad(); d.items.filter(dkMatch).forEach(x=>on?dkSel.add(x.po):dkSel.delete(x.po)); dkRender(); }
+function dkChosen(d){ const c=d.items.filter(x=>dkSel.has(x.po)); if(!c.length) showToast('⚠ Tick at least one PO'); return c; }
+function dkMark(d,list,st){ list.forEach(x=>{ if(x.stage<st){ x.stage=st; x.t[st]=Date.now(); } }); dkSave(d); dkRender(); }
+function dkPackMsg(){ const d=dkLoad(), c=dkChosen(d); if(!c.length) return; const g={};
+  c.forEach(x=>{ const k=x.chan+'|'+x.wh; (g[k]=g[k]||[]).push(x); });
+  const out=Object.values(g).map(a=>`${d.tags[a[0].wh]||'@'} Kindly Process the below ${a[0].chan} PO${a.length>1?'s':''}\n\n${a.map((x,i)=>`${i+1}. ${x.po}`).join('\n')}\n\nOnce packed, share the box count.`).join('\n\n———\n\n');
+  copyText(out); dkMark(d,c,1); showToast('✅ Packing message copied'); return out; }
+function dkLabelMsg(){ const d=dkLoad(), c=dkChosen(d); if(!c.length) return; let n=parseInt(d.next)||0;
+  c.forEach(x=>{ if(!x.row&&n) x.row=String(n++); else if(x.row) n=Math.max(n,(parseInt(x.row)||0)+1); }); d.next=n?String(n):'';
+  if(c.some(x=>!x.row)) showToast('ℹ Add sheet row numbers (or the first row) so they show in the message');
+  const lt=(`${d.ltag||'@'} Share Label\n\n${c.map(x=>`${x.row||'—'} - ${x.po}${d.boxes&&x.boxes?` - ${x.boxes} box${x.boxes==1?'':'es'}`:''}`).join('\n')}`);
+  copyText(lt); dkMark(d,c,3); showToast('✅ Label message copied'); return lt; }
+function dkSheetRows(){ const d=dkLoad(), c=dkChosen(d); if(!c.length) return; copyText(c.map(x=>`${x.addr||x.wh}\t${x.po}`).join('\n')); showToast('✅ Address + PO rows copied'); }
+function dkUpdate(){ const d=dkLoad(), c=dkChosen(d); if(!c.length) return; const M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  gsSend(c.map(x=>{ const t=new Date(x.t[0]); return [t.getDate()+'-'+M[t.getMonth()]+'-'+t.getFullYear(),x.po,x.chan,canonOf(x.zone,ZONES),canonOf(x.wh,WHS),x.to,'',x.val||'',x.qty||'',x.boxes]; })); }
+function rcDesk(){ const po=($(RC.po).value||'').trim(); if(!po){ showToast('⚠ Enter the PO number first'); return null; }
+  try{ dkSync(); }catch(e){} const d=dkLoad(); let x=d.items.find(i=>i.po===po);
+  if(!x){ x={po,chan:'',wh:'',zone:'',to:'',val:0,qty:0,addr:'',stage:0,boxes:'',row:'',t:[Date.now()]}; d.items.push(x); }
+  x.chan=$(RC.chan).value.trim()||x.chan; x.wh=canonOf($(RC.wh).value,WHS)||x.wh; x.zone=canonOf($(RC.zone).value,ZONES)||x.zone; x.to=$(RC.to).value.trim()||x.to;
+  x.val=+String($(RC.val).value).replace(/[₹,\s]/g,'')||x.val; x.qty=+$(RC.qty).value||x.qty; if($(RC.boxes).value.trim()) x.boxes=$(RC.boxes).value.trim();
+  dkSave(d); dkSel.clear(); dkSel.add(po); dkRender(); return po; }
+function rcMsgShow(t){ if(!t) return; $('rcMsgBox').textContent=t; $('rcMsgWrap').style.display='block'; }
+function rcPackMsg(){ if(rcDesk()) rcMsgShow(dkPackMsg()); }
+function rcLabelMsg(){ if(rcDesk()) rcMsgShow(dkLabelMsg()); }
+function dkDone(){ const d=dkLoad(), c=dkChosen(d); if(c.length){ dkMark(d,c,4); dkSel.clear(); dkRender(); } }
+function dkDel(){ const d=dkLoad(), c=dkChosen(d); if(!c.length||!confirm(`Remove ${c.length} PO(s) from the desk?`)) return; d.items=d.items.filter(x=>!dkSel.has(x.po)); dkSel.clear(); dkSave(d); dkRender(); }
+function dkInit(){ const t=()=>{ const e=$('dkClock'); if(e) e.innerHTML=dkIST()+' IST<br><span style="font-weight:400;color:var(--muted)">live</span>'; }; t(); setInterval(t,1000); setInterval(dkRender,60000);
+  $('dkPaste').addEventListener('paste',e=>{ const f=[...(e.clipboardData&&e.clipboardData.files||[])].find(x=>/^image\//.test(x.type)); if(f){ e.preventDefault(); dkOcr(f); } else setTimeout(()=>{ dkParse($('dkPaste').value); $('dkPaste').value=''; },0); });
+  dkSync(); }
+document.addEventListener('DOMContentLoaded', dkInit);
+setInterval(()=>{ const e=document.getElementById('abClock'); if(e) e.textContent=dkIST()+' IST'; },1000);
+
+// ================= Skins + FX =================
+const SKINS=[['aurora','🎨 Aurora'],['neon','⚡ Neon'],['sunset','🌅 Sunset'],['paper','📄 Paper']];
+function skinApply(k){ const r=document.documentElement; if(k==='aurora') r.removeAttribute('data-skin'); else r.setAttribute('data-skin',k);
+  const b=document.getElementById('skinBtn'); if(b) b.textContent=(SKINS.find(x=>x[0]===k)||SKINS[0])[1]; try{ localStorage.setItem('po_skin',k); }catch(e){} }
+function skinNext(){ let c='aurora'; try{ c=localStorage.getItem('po_skin')||'aurora'; }catch(e){} const n=SKINS[(SKINS.findIndex(x=>x[0]===c)+1)%SKINS.length][0]; skinApply(n); confetti(14); }
+function confetti(n){ const cv=document.getElementById('fx'); if(!cv||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+  const x=cv.getContext('2d'); cv.width=innerWidth; cv.height=innerHeight; const C=['#4285f4','#ea4335','#fbbc04','#34a853','#a66cff'], N=n||110;
+  const P=Array.from({length:N},()=>({x:innerWidth/2+(Math.random()-.5)*160,y:innerHeight*.65,vx:(Math.random()-.5)*14,vy:-Math.random()*15-5,s:Math.random()*7+4,c:C[Math.random()*5|0],r:Math.random()*6,vr:(Math.random()-.5)*.4}));
+  const t0=performance.now(); (function f(t){ const k=(t-t0)/1500; x.clearRect(0,0,cv.width,cv.height); if(k>=1) return;
+    P.forEach(p=>{ p.vy+=.45; p.x+=p.vx; p.y+=p.vy; p.r+=p.vr; x.save(); x.globalAlpha=1-k; x.translate(p.x,p.y); x.rotate(p.r); x.fillStyle=p.c; x.fillRect(-p.s/2,-p.s/3,p.s,p.s*.6); x.restore(); }); requestAnimationFrame(f); })(t0); }
+(function fxInit(){
+  try{ skinApply(localStorage.getItem('po_skin')||'aurora'); }catch(e){}
+  setTimeout(()=>{ const b=document.getElementById('boot'); if(b) b.remove(); },1900);
+  document.addEventListener('mousemove',e=>{ const c=e.target.closest&&e.target.closest('.card'); if(c){ const r=c.getBoundingClientRect(); c.style.setProperty('--mx',(e.clientX-r.left)+'px'); c.style.setProperty('--my',(e.clientY-r.top)+'px'); }
+    const t=e.target.closest&&e.target.closest('.dk-k,.tcard,.bk-kpi'); document.querySelectorAll('.tilt').forEach(o=>{ if(o!==t){ o.classList.remove('tilt'); o.style.transform=''; } });
+    if(t){ const r=t.getBoundingClientRect(), px=(e.clientX-r.left)/r.width-.5, py=(e.clientY-r.top)/r.height-.5; t.classList.add('tilt'); t.style.transform=`perspective(600px) rotateX(${-py*10}deg) rotateY(${px*12}deg) translateY(-3px)`; } });
+  document.addEventListener('click',e=>{ const b=e.target.closest&&e.target.closest('button'); if(!b) return; const r=b.getBoundingClientRect(), d=Math.max(r.width,r.height), s=document.createElement('span');
+    s.className='rip'; s.style.cssText=`width:${d}px;height:${d}px;left:${e.clientX-r.left-d/2}px;top:${e.clientY-r.top-d/2}px`; b.appendChild(s); setTimeout(()=>s.remove(),650); });
+})();
+
+// ================= Command palette + scroll bar + magnetic buttons =================
+const CMDS=[['📄 Upload a PO PDF','upload',()=>$('pdfInput').click()],['📦 Packing message','packing',()=>dkPackMsg()],['🏷 Label message','label',()=>dkLabelMsg()],['🔄 Update Master (selected)','update master sheet sync',()=>dkUpdate()],
+ ['⬇ EasyEcom CSV (current PO)','csv easyecom download',()=>easyCsvMain()],['🎯 Show current PO only','focus current',()=>{ dkF=-2; dkRender(); }],['📋 Show all active POs','active all',()=>{ dkF=-1; dkRender(); }],
+ ['🎨 Change style','style theme skin',()=>skinNext()],['🧮 Convert screen','convert home',()=>navTo('convert')],['📑 Master Sheet tab','master sheet',()=>navTo('sheet')],['📒 Record Book tab','record book',()=>navTo('book')],
+ ['🧪 Test Google Sheet connection','test connection',()=>gsTest()],['🚚 Jump to Dispatch Desk','desk dispatch',()=>navTo('desk')]];
+let cmdSel=0, cmdRes=CMDS;
+function cmdOpen(){ $('cmdk').classList.add('on'); $('cmdIn').value=''; cmdRender(); setTimeout(()=>$('cmdIn').focus(),30); }
+function cmdClose(){ $('cmdk').classList.remove('on'); }
+function cmdRender(){ const q=$('cmdIn').value.toLowerCase().trim(); cmdRes=CMDS.filter(c=>!q||(c[0]+' '+c[1]).toLowerCase().includes(q)); cmdSel=Math.min(cmdSel,Math.max(0,cmdRes.length-1));
+  $('cmdList').innerHTML=cmdRes.map((c,i)=>`<div class="ci ${i===cmdSel?'on':''}" onclick="cmdRun(${i})">${c[0]}<span>${c[1].split(' ')[0]}</span></div>`).join('')||'<div class="chint">No match</div>'; }
+function cmdRun(i){ const c=cmdRes[i]; if(!c) return; cmdClose(); setTimeout(c[2],60); }
+document.addEventListener('keydown',e=>{ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){ e.preventDefault(); cmdOpen(); return; }
+  if(!$('cmdk').classList.contains('on')) return;
+  if(e.key==='Escape') cmdClose(); else if(e.key==='ArrowDown'){ e.preventDefault(); cmdSel=Math.min(cmdSel+1,cmdRes.length-1); cmdRender(); } else if(e.key==='ArrowUp'){ e.preventDefault(); cmdSel=Math.max(cmdSel-1,0); cmdRender(); } else if(e.key==='Enter'){ e.preventDefault(); cmdRun(cmdSel); } });
+document.addEventListener('input',e=>{ if(e.target.id==='cmdIn'){ cmdSel=0; cmdRender(); } });
+addEventListener('scroll',()=>{ const h=document.documentElement; $('sp').style.width=(h.scrollTop/Math.max(1,h.scrollHeight-h.clientHeight)*100)+'%'; },{passive:true});
+document.addEventListener('mousemove',e=>{ document.querySelectorAll('button[style*="--bx"]').forEach(b=>{ if(!b.matches(':hover')){ b.style.removeProperty('--bx'); b.style.removeProperty('--by'); } });
+  const b=e.target.closest&&e.target.closest('button.btn-main,button.btn-ok,button.btn-warn'); if(!b) return; const r=b.getBoundingClientRect();
+  b.style.setProperty('--bx',((e.clientX-r.left)/r.width-.5)*8+'px'); b.style.setProperty('--by',((e.clientY-r.top)/r.height-.5)*6+'px'); });
+
+// ================= App-shell navigation =================
+function navTo(k){ document.body.dataset.nav=k; showTab(k==='sheet'||k==='book'?k:'convert');
+  document.querySelectorAll('#side nav button').forEach(b=>b.classList.toggle('on',b.dataset.n===k)); navInk(); scrollTo({top:0,behavior:'smooth'}); if(k==='desk'){ try{ dkRender(); }catch(e){} } }
+function navInk(){ const b=document.querySelector('#side nav button.on'), i=$('ink'); if(b&&i){ i.style.transform=`translateY(${b.offsetTop}px)`; i.style.height=b.offsetHeight+'px'; } }
+function navBadges(){ try{ $('nbDesk').textContent=dkLoad().items.filter(x=>x.stage<4).length; $('nbHist').textContent=readHist().length; }catch(e){} const c=$('sbClock'); if(c) c.innerHTML=dkIST().replace(', ','<br>'); }
+addEventListener('resize',navInk); setInterval(navBadges,1000); navBadges(); navTo('convert');
+
+// ================= Init =================
+let _pdfBlobUrl = null;
+function togglePreview(){
+  const p = $('pdfPreview');
+  p.classList.toggle('open');
+  $('previewBtn').textContent = p.classList.contains('open') ? '🙈 Hide PDF' : '👁 View PDF';
+}
+function showTab(t){
+  ['convert','sheet','book'].forEach(n=>{ $('tab-'+n).classList.toggle('active', t===n); });
+  $('viewConvert').style.display = t==='convert' ? '' : 'none';
+  $('viewSheet').style.display = t==='sheet' ? '' : 'none';
+  $('viewBook').style.display = t==='book' ? '' : 'none';
+  if (t==='sheet') renderSheet();
+  if (t==='book') renderBook();
+}
+function tickClock(){
+  const d = new Date();
+  $('clockDate').textContent = d.toLocaleDateString('en-IN',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});
+  $('clockTime').textContent = d.toLocaleTimeString('en-IN',{hour12:false});
+}
+
+// ================= Master Sheet =================
+function flattenHistory(){
+  const l = readHist(), out = [];
+  l.slice().reverse().forEach(h=>{
+    const po = h.header && h.header.fields ? ((h.header.fields.find(f=>f[0]==='PO Number')||[])[1]||'') : '';
+    (h.data||[]).forEach(r=>{
+      out.push({ date:h.t, buyer:CFG[h.mode]?CFG[h.mode].tag:h.mode, mode:h.mode, po, sku:r.sku, code:r.code||'', name:r.name||'', qty:r.qty, price:r.price, amount:r.qty*r.price });
+    });
+  });
+  const have = new Set(out.filter(r=>r.mode==='purplle').map(r=>r.po));
+  const lm = {}; Object.entries(LO_MAP).forEach(([k,v])=>lm[k]={sku:v[0],name:v[1]});
+  const cu = (()=>{ try{ return JSON.parse(localStorage.getItem('po_all_map_purplle')||'{}'); }catch(e){ return {}; } })();
+  loAll().forEach(p=>{ if (have.has(p.po)) return;
+    p.items.forEach(it=>{ const m=cu[it[0]]||lm[it[0]];
+      out.push({ date:p.date, buyer:'PURPLLE', mode:'purplle', po:p.po, sku:m?m.sku:it[0], code:it[0], name:m?m.name:'', qty:it[1], price:loIncl(it), amount:it[1]*loIncl(it) }); }); });
+  return out;
+}
+function renderSheet(){
+  const all = flattenHistory();
+  const q = ($('sheetSearch').value||'').toLowerCase().trim(), buyer=$('sheetBuyer').value;
+  let list = all.filter(r => (buyer==='all'||r.mode===buyer) &&
+    (!q || r.sku.toLowerCase().includes(q) || (r.code||'').toLowerCase().includes(q) || (r.po||'').toLowerCase().includes(q) || r.buyer.toLowerCase().includes(q) || (r.name||'').toLowerCase().includes(q)));
+  const tq = list.reduce((s,r)=>s+r.qty,0), tv = list.reduce((s,r)=>s+r.amount,0);
+  $('sheetSub').textContent = `${list.length} rows across ${new Set(list.map(r=>r.po||r.date)).size} PO(s)`;
+  $('sheetStat').textContent = `Showing ${list.length} of ${all.length} rows · Qty ${tq.toLocaleString('en-IN')} · ₹${tv.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
+  $('sheetBody').innerHTML = list.map((r,i)=>`<tr>
+    <td>${i+1}</td><td class="code">${esc(r.date)}</td><td>${esc(r.buyer)}</td><td class="code">${esc(r.po)||'—'}</td>
+    <td class="sku">${esc(r.sku)}</td><td class="code">${esc(r.code)}</td><td class="pname">${esc(r.name)}</td>
+    <td class="num">${r.qty}</td><td class="num">${r.price.toFixed(2)}</td><td class="num">₹${r.amount.toFixed(2)}</td></tr>`).join('')
+    || `<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:20px;">No conversions saved yet — run one from the Convert tab.</td></tr>`;
+}
+function sheetRowsForExport(){
+  const q = ($('sheetSearch').value||'').toLowerCase().trim(), buyer=$('sheetBuyer').value;
+  return flattenHistory().filter(r => (buyer==='all'||r.mode===buyer) &&
+    (!q || r.sku.toLowerCase().includes(q) || (r.code||'').toLowerCase().includes(q) || (r.po||'').toLowerCase().includes(q) || r.buyer.toLowerCase().includes(q) || (r.name||'').toLowerCase().includes(q)));
+}
+function exportSheetCSV(){
+  const list = sheetRowsForExport(); if (!list.length) return;
+  const q = s => `"${String(s==null?'':s).replace(/"/g,'""')}"`;
+  const csv = 'Date,Buyer,PO Number,SKU,Code,Product Name,Qty,Price,Amount\n' + list.map(r=>
+    [q(r.date),q(r.buyer),q(r.po),q(r.sku),q(r.code),q(r.name),q(r.qty),q(r.price.toFixed(2)),q(r.amount.toFixed(2))].join(',')).join('\n');
+  download(new Blob([csv],{type:'text/csv'}), `master_sheet_${Date.now()}.csv`);
+}
+function exportSheetXLSX(){
+  const list = sheetRowsForExport(); if (!list.length) return;
+  if (!window.XLSX){ showToast('Excel library failed to load — using CSV instead'); exportSheetCSV(); return; }
+  const aoa = [['Date','Buyer','PO Number','SKU','Code','Product Name','Qty','Price','Amount']]
+    .concat(list.map(r=>[r.date,r.buyer,r.po,r.sku,r.code,r.name,r.qty,Number(r.price.toFixed(2)),Number(r.amount.toFixed(2))]));
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  ws['!cols'] = [{wch:20},{wch:12},{wch:16},{wch:12},{wch:16},{wch:34},{wch:8},{wch:10},{wch:12}];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Master Sheet');
+  xlsxSave(wb, `master_sheet_${Date.now()}.xlsx`);
+  showToast('📥 Excel file downloaded');
+}
+
+
+// ================= Purplle batch (12 POs pre-loaded) =================
+const LO_SEED = [];
+function loExtra(){ try{ return JSON.parse(localStorage.getItem('po_lo_extra')||'[]'); }catch(e){ return []; } }
+const loDeleted = () => { try{ return JSON.parse(localStorage.getItem('po_lo_deleted')||'[]'); }catch(e){ return []; } };
+function loAll(){ const m={}, del=loDeleted(); LO_SEED.concat(loExtra()).forEach(p=>m[p.po]=p); return Object.values(m).filter(p=>!del.includes(p.po)).sort((a,b)=>a.po.localeCompare(b.po)); }
+let loSel = null;
+const loGstPct = it => { const r=(it[4]/it[3]-1)*100; return [0,5,12,18,28].reduce((b,x)=>Math.abs(x-r)<Math.abs(b-r)?x:b,18); };
+const loIncl = it => Math.round(it[3]*(1+loGstPct(it)/100)*100)/100;
+const loPrice = it => { const s=$('priceSource').value; return s==='mrp'?it[2]:(s==='rate'?it[3]:loIncl(it)); };
+function loToggle(po){ loSel.has(po)?loSel.delete(po):loSel.add(po); renderLoBatch(); }
+function loRows(list){
+  const map=getFullMapping(), acc={};
+  list.forEach(p=>p.items.forEach(it=>{ const a=acc[it[0]]||(acc[it[0]]={code:it[0],qty:0,price:loPrice(it)}); a.qty+=it[1]; }));
+  return Object.values(acc).map(a=>mk(map,a.code,'',a.qty,a.price)).sort((x,y)=>String(x.sku).localeCompare(String(y.sku)));
+}
+function loSelected(){ return loAll().filter(p=>loSel.has(p.po)); }
+function renderLoBatch(){
+  const c=$('loCard'); if(!c) return;
+  if (mode!=='purplle'){ c.style.display='none'; return; }
+  c.style.display='block';
+  const all=loAll(); if(!loSel) loSel=new Set(all.map(p=>p.po));
+  const f2=v=>v.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
+  if (!all.length) $('loPOs').innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:14px;">No POs loaded — drop Purplle PDFs on the upload box, or press ♻ Restore deleted POs.</td></tr>';
+  else $('loPOs').innerHTML = all.map(p=>`<tr><td><input type="checkbox" ${loSel.has(p.po)?'checked':''} onchange="loToggle('${p.po}')"></td><td class="code">${p.po}</td><td>${p.date}</td><td class="pname" title="${esc(LO_ADDR)}">MANASH E-COMMERCE PRIVATE LTD ( Purplle ) - BLR</td><td class="num">${p.items.length}</td><td class="num">${p.qty}</td><td class="num">₹${f2(p.val)}</td><td>${loDone().includes(p.po)?'<span class="status-ok">✅ done</span> ':''}<button class="btn-ghost btn-sm" onclick="loRowOne('${p.po}')" title="Copy this PO as one master-sheet row">📑 Copy row</button> <button class="btn-ghost btn-sm" onclick="loCsv('${p.po}')" title="EasyEcom upload CSV: Sku, Quantity, Price">⬇ CSV</button> <button class="btn-ghost btn-sm" onclick="loGo('${p.po}')">Punch this PO</button> <button class="del-btn" onclick="loDel('${p.po}')" title="Delete this PO">✕</button></td></tr>`).join('');
+  $('loAllChk').checked = all.every(p=>loSel.has(p.po));
+  loCfgLoad(); renderLoSheet();
+  const sq=loSelected().reduce((s,p)=>s+p.qty,0), sv=loSelected().reduce((s,p)=>s+p.val,0), ss=loSelected().reduce((s,p)=>s+p.items.length,0);
+  $('loPOFoot').innerHTML = `<tr><td></td><td colspan="2">Selected total · ${loSelected().length} PO(s)</td><td></td><td class="num">${ss}</td><td class="num">${sq}</td><td class="num">₹${f2(sv)}</td><td></td></tr>`;
+  const sel=loSelected(), rs=loRows(sel), tq=rs.reduce((s,r)=>s+r.qty,0), tv=rs.reduce((s,r)=>s+r.qty*r.price,0);
+  $('loSub').textContent = `${sel.length} of ${all.length} POs selected · ${tq.toLocaleString('en-IN')} pcs`;
+  $('loComb').innerHTML = rs.map(r=>`<tr class="${r.mapped?'':'unmapped'}"><td><span class="sku">${esc(r.sku)}</span>${r.mapped?'':'<span class="flag flag-warn">unmapped</span>'}</td><td class="code">${esc(r.code)}</td><td class="pname">${esc(r.name)}</td><td class="num">${r.qty}</td><td class="num">${r.price.toFixed(2)}</td><td class="num">₹${f2(r.qty*r.price)}</td></tr>`).join('');
+  $('loFoot').innerHTML = `<tr><td colspan="3">Total · ${rs.length} SKUs</td><td class="num">${tq}</td><td></td><td class="num">₹${f2(tv)}</td></tr>`;
+}
+
+const LO_ADDR = 'MANASH E-COMMERCE PRIVATE LTD (Purplle), Survey 3/2 & 3/1, Thonachinakuppe Village, Kasaba Hobli, Nelamangala, Bengaluru Rural - 562123';
+const LO_CFG_DEF = { chan:'Purplle', zone:'South - KA', wh:'Emiza BLR', to:'MANASH E-COMMERCE PRIVATE LTD ( Purplle ) - BLR', trans:'' };
+const LO_CFG_IDS = { date:'loDate', chan:'loChan', zone:'loZone', wh:'loWh', to:'loTo', trans:'loTrans' };
+let loCfgInit = false;
+function loToday(){ const d=new Date(); return d.getDate()+'-'+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]+'-'+d.getFullYear(); }
+function loCfgLoad(){
+  if (loCfgInit) return; loCfgInit = true;
+  let c={}; try{ c=JSON.parse(localStorage.getItem('po_pur_cfg')||'{}'); }catch(e){} if (!/MANASH/i.test(c.to||'')) delete c.to;
+  const v = Object.assign({}, LO_CFG_DEF, c, { date: loToday() });
+  Object.entries(LO_CFG_IDS).forEach(([k,id])=>{ $(id).value = v[k]; });
+}
+function loCfgGet(){ const o={}; Object.entries(LO_CFG_IDS).forEach(([k,id])=>o[k]=($(id).value||'').trim()); return o; }
+function loCfgSave(){ const o=loCfgGet(); delete o.date; try{ localStorage.setItem('po_pur_cfg', JSON.stringify(o)); }catch(e){} renderLoSheet(); }
+function loSheetRow(p){ const c=loCfgGet(); return [c.date,p.po,c.chan,canonOf(c.zone,ZONES),canonOf(c.wh,WHS),c.to,c.trans,p.val.toFixed(2),p.qty,'']; }
+function renderLoSheet(){
+  const sel=loSelected(), f2=v=>v.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
+  $('loSheet').innerHTML = sel.map(p=>{ const r=loSheetRow(p); r[7]='₹'+f2(p.val); return '<tr>'+r.map((x,i)=>`<td class="${i>=7?'num':''}">${esc(x)}</td>`).join('')+'</tr>'; }).join('')
+    || '<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:12px;">Tick at least one PO</td></tr>';
+}
+function loSheetCopy(withHeader, current){
+  let list = current ? loAll().filter(p=>p.po===loQ[loIdx]) : loSelected();
+  if (!list.length){ showToast('Select at least one PO'); return; }
+  const hdr=['DATE PUNCHED','PO NUMBER','CHANNEL','ZONE','WH FROM','DELIVERY TO (DISTRIBUTOR)','TRANSPORTER','PO VALUE','PO QTY','BOXES'];
+  const lines=list.map(p=>loSheetRow(p).join('\t'));
+  copyText((withHeader?hdr.join('\t')+'\n':'')+lines.join('\n'));
+  list.forEach(p=>bkLog('purplle',p.po,p.qty,p.val,p.items.length));
+  showToast(`✅ ${list.length} master-sheet row${list.length>1?'s':''} copied`);
+}
+function loPoCopy(){ const l=loSelected(); if(l.length){ copyText(l.map(p=>p.po).join('\n')); showToast('✅ PO numbers copied'); } }
+
+// ================= Master Dispatch Tracker row (Reliance / 1MG / FirstCry) =================
+const ROW_DEF = { reliance:{chan:'Reliance Retail'}, '1mg':{chan:'Tata 1MG'}, firstcry:{chan:'FirstCry'} };
+let rowKey = '';
+const RC = { date:'rcDate', po:'rcPo', chan:'rcChan', zone:'rcZone', wh:'rcWh', to:'rcTo', trans:'rcTrans', val:'rcVal', qty:'rcQty', boxes:'rcBoxes' };
+function hdrAll(){ return lastHeader ? (lastHeader.wide||[]).concat(lastHeader.fields||[]) : []; }
+function hdrVal(label){ const f=hdrAll().find(x=>x[0]===label); return f?String(f[1]||''):''; }
+function rowCfg(){ try{ return JSON.parse(localStorage.getItem('po_row_cfg_'+mode)||'{}'); }catch(e){ return {}; } }
+// FirstCry: Zone + WH-from come from the "Delivered By" (dispatch) address; learned per PIN-prefix when you edit them
+const ZONES=['East - WB','North - DH','South - KA','West - MH'], WHS=['Delhivery KOL','Delhivery MUM','Emiza BLR','Emiza GGN'];
+const canonOf=(v,l)=>{ const n=x=>String(x||'').toLowerCase().replace(/[^a-z0-9]/g,''), k=n(v); return l.find(x=>n(x)===k)||String(v||'').replace(/\s+/g,' ').trim(); };
+const FC_WH_DEF = [
+  { re:/kolkata|howrah|west bengal/i, zone:'East - WB',   wh:'Delhivery KOL' },
+  { re:/bhiwandi|mumbai|thane|kalher|maharashtra/i, zone:'West - MH', wh:'Delhivery MUM' },
+  { re:/nelamang|karnataka|562123|emiza supply/i, zone:'South - KA', wh:'Emiza BLR' },
+  { re:/gurgaon|gurugram|haryana|122105|tauru|fatehpur|emiza g\b/i, zone:'North - DH', wh:'Emiza GGN' }
+];
+let rcDisp = '';
+const fcPin3 = a => { const m=String(a).match(/India\s*-\s*(\d{6})/); return m?m[1].slice(0,3):''; };
+function fcWhGet(addr){
+  if (!addr) return null; let L={}; try{ L=JSON.parse(localStorage.getItem('po_fc_wh_map')||'{}'); }catch(e){}
+  const p=fcPin3(addr); if (p && L[p]) return {zone:L[p].zone, wh:L[p].wh==='Delhivery BHW'?'Delhivery MUM':L[p].wh};
+  const d=FC_WH_DEF.find(x=>x.re.test(addr)); return d?{zone:d.zone,wh:d.wh}:null;
+}
+function rcSave(){ try{
+  localStorage.setItem('po_row_cfg_'+mode, JSON.stringify({chan:$('rcChan').value, zone:$('rcZone').value, wh:$('rcWh').value, trans:$('rcTrans').value}));
+  if (mode==='firstcry'){ const p=fcPin3(rcDisp); if (p){ let L={}; try{ L=JSON.parse(localStorage.getItem('po_fc_wh_map')||'{}'); }catch(e){} L[p]={zone:$('rcZone').value, wh:$('rcWh').value}; localStorage.setItem('po_fc_wh_map', JSON.stringify(L)); } }
+}catch(e){} }
+function updateRowCard(force){
+  const c=$('rowCard'); if(!c) return;
+  if (mode==='purplle' || !rows.length){ c.style.display='none'; return; }
+  c.style.display='block';
+  const po = hdrVal('PO Number'), qty = rows.reduce((s,r)=>s+r.qty,0);
+  const key = mode+'|'+po+'|'+rows.length+'|'+qty;
+  if (!force && key===rowKey) return;
+  rowKey = key;
+  let val = 0;
+  for (const [l,v] of hdrAll()){ if (/total/i.test(l)){ const m=String(v).match(/₹\s*([\d,]+(?:\.\d+)?)/); if (m){ val=toNum(m[1]); break; } } }
+  if (!val) val = Math.round(rows.reduce((s,r)=>s+r.qty*r.price,0)*100)/100;
+  const dl = hdrAll().find(([l,v])=>/deliver|ship-to|receiving/i.test(l) && !/date/i.test(l) && v);
+  const cfg = Object.assign({}, ROW_DEF[mode]||{}, rowCfg());
+  let toVal = dl ? String(dl[1]).replace(/\s+/g,' ').trim() : '', zoneV = cfg.zone||'', whV = cfg.wh||'';
+  if (mode==='firstcry'){
+    const buyer = hdrVal('Buyer'); if (buyer) toVal = buyer.replace(/\s+/g,' ').trim();   // "Delivered To" NAME only
+    rcDisp = hdrVal('Dispatch from (Delivered By)'); const m = fcWhGet(rcDisp); if (m){ zoneV=m.zone; whV=m.wh; }
+  }
+  $(RC.date).value = loToday(); $(RC.po).value = po; $(RC.chan).value = cfg.chan||''; $(RC.zone).value = zoneV;
+  $(RC.wh).value = whV; $(RC.to).value = toVal; $(RC.trans).value = cfg.trans||'';
+  $(RC.val).value = val.toFixed(2); $(RC.qty).value = qty; $(RC.boxes).value = '';
+  $('rowTag').textContent = CFG[mode] ? CFG[mode].tag : '';
+}
+function rcCopy(withHeader){
+  const g = k => ($(RC[k]).value||'').replace(/\s+/g,' ').trim();
+  const num = s => String(s).replace(/[₹,\s]/g,'');
+  const row = [g('date'),g('po'),g('chan'),canonOf(g('zone'),ZONES),canonOf(g('wh'),WHS),g('to'),g('trans'),num(g('val')),num(g('qty')),g('boxes')];
+  if (!row[1]){ showToast('⚠ Enter the PO number first'); return; }
+  const hdr = ['DATE PUNCHED','PO NUMBER','CHANNEL','ZONE','WH FROM','DELIVERY TO (DISTRIBUTOR)','TRANSPORTER','PO VALUE','PO QTY','BOXES'];
+  copyText((withHeader?hdr.join('\t')+'\n':'')+row.join('\t'));
+  bkLog(mode,row[1],num(g('qty')),num(g('val')),rows.length);
+  showToast('✅ Master-sheet row copied');
+}
+function loRowOne(po){ const p=loAll().find(x=>x.po===po); if(!p) return; copyText(loSheetRow(p).join('\t')); bkLog('purplle',p.po,p.qty,p.val,p.items.length); showToast('✅ Row copied — PO '+po); }
+
+// ================= Reset / delete =================
+function loRemovePo(po){
+  try{
+    const ex = loExtra().filter(p=>p.po!==po); localStorage.setItem('po_lo_extra', JSON.stringify(ex));
+    if (LO_SEED.some(p=>p.po===po)){ const d=loDeleted(); if(!d.includes(po)) d.push(po); localStorage.setItem('po_lo_deleted', JSON.stringify(d)); }
+    const dn = loDone().filter(x=>x!==po); localStorage.setItem('po_pur_done', JSON.stringify(dn));
+  }catch(e){}
+  if (loSel) loSel.delete(po);
+}
+function loDel(po){ if (!confirm('Delete PO '+po+' from this list?')) return; loRemovePo(po); loStop(); renderLoBatch(); showToast('🗑 PO '+po+' deleted'); }
+function loDeleteSelected(){
+  const sel = loSelected().map(p=>p.po); if (!sel.length){ showToast('Select at least one PO'); return; }
+  if (!confirm('Delete '+sel.length+' selected PO(s) from this list?')) return;
+  sel.forEach(loRemovePo); loStop(); renderLoBatch(); showToast('🗑 '+sel.length+' PO(s) deleted');
+}
+function loRestore(){ try{ localStorage.removeItem('po_lo_deleted'); }catch(e){} loSel=null; renderLoBatch(); showToast('♻ Restored'); }
+function resetScreen(){
+  removePdf();
+  try{ _pdfBlobUrl && URL.revokeObjectURL(_pdfBlobUrl); }catch(e){} _pdfBlobUrl = null;
+  $('pdfFrame').removeAttribute('src'); $('pdfPreview').classList.remove('open'); $('previewBtn').textContent='👁 View PDF';
+  clearAll(); lastItems = null; lastItemsMode = null; lastFullText = null; rowKey = '';
+  const b=document.getElementById('unmappedBanner'); if (b) b.style.display='none';
+  loStop(); updateRowCard(); renderLoBatch();
+  showToast('↺ Screen reset');
+}
+function deleteAllPdfs(){
+  if (!confirm('Delete the loaded PDF and ALL Purplle POs (uploaded) from this page?\n\nSaved history, mappings and settings are kept.')) return;
+  try{
+    localStorage.removeItem('po_lo_extra'); localStorage.removeItem('po_pur_done');
+    localStorage.setItem('po_lo_deleted', JSON.stringify(LO_SEED.map(p=>p.po)));
+  }catch(e){}
+  loSel = null; resetScreen(); showToast('🗑 All PDFs and POs deleted');
+}
+
+// ================= Record Book =================
+const BK_KEY='po_record_book';
+const bkRead=()=>{ try{ return JSON.parse(localStorage.getItem(BK_KEY)||'[]'); }catch(e){ return []; } };
+const bkWrite=l=>{ try{ localStorage.setItem(BK_KEY, JSON.stringify(l)); }catch(e){} };
+const dayKey=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+function bkLog(m, po, qty, val, skus){
+  po=String(po||'').trim(); if(!po) return;
+  const l=bkRead(), now=new Date(), day=dayKey(now), i=l.findIndex(x=>x.mode===m&&x.po===po&&x.day===day);
+  const rec={ts:now.toISOString(), day, mode:m, po, qty:+qty||0, val:+val||0, skus:+skus||0};
+  if (i>=0) l[i]=rec; else l.unshift(rec);
+  bkWrite(l);
+}
+let bkRangeSel='week', bkDay=null; const bkCollapsed=new Set();
+const BK_RANGES=[['today','Today'],['week','This week'],['lastweek','Last week'],['month','This month'],['all','All time']];
+function bkBounds(r){
+  const n=new Date(); n.setHours(0,0,0,0); const mon=new Date(n); mon.setDate(n.getDate()-((n.getDay()+6)%7));
+  if (r==='today') return [n,new Date(n.getTime()+864e5)];
+  if (r==='week') return [mon,new Date(mon.getTime()+7*864e5)];
+  if (r==='lastweek') return [new Date(mon.getTime()-7*864e5),mon];
+  if (r==='month') return [new Date(n.getFullYear(),n.getMonth(),1),new Date(n.getFullYear(),n.getMonth()+1,1)];
+  return [new Date(0),new Date(8.64e15)];
+}
+function bkFiltered(){
+  const [a,b]=bkBounds(bkRangeSel), q=($('bkSearch').value||'').trim().toLowerCase(), by=$('bkBuyer').value;
+  return bkRead().filter(x=>{ const d=new Date(x.ts); return d>=a && d<b && (by==='all'||x.mode===by) && (!q||x.po.toLowerCase().includes(q)) && (!bkDay||x.day===bkDay); });
+}
+const bkRs=v=>'₹'+Number(v).toLocaleString('en-IN',{maximumFractionDigits:0});
+const bkNice=k=>{ const [y,m,d]=k.split('-').map(Number); return new Date(y,m-1,d).toLocaleDateString('en-IN',{weekday:'short',day:'2-digit',month:'short',year:'numeric'}); };
+function bkSetRange(r){ bkRangeSel=r; bkDay=null; renderBook(); }
+function bkPickDay(k){ bkDay = bkDay===k ? null : k; renderBook(); }
+function bkToggle(k){ bkCollapsed.has(k)?bkCollapsed.delete(k):bkCollapsed.add(k); renderBook(); }
+function bkDel(id){ if(!confirm('Remove this entry from the Record Book?')) return; bkWrite(bkRead().filter(x=>(x.ts+'|'+x.mode+'|'+x.po)!==id)); renderBook(); }
+function bkClear(){ if(!confirm('Delete the ENTIRE Record Book? This cannot be undone.')) return; bkWrite([]); bkDay=null; renderBook(); showToast('🗑 Record Book cleared'); }
+function renderBook(){
+  $('bkRange').innerHTML = BK_RANGES.map(([k,l])=>`<button class="chip ${k===bkRangeSel?'on':''}" onclick="bkSetRange('${k}')">${l}</button>`).join('')
+    + (bkDay?`<button class="chip on" onclick="bkPickDay('${bkDay}')">📅 ${bkNice(bkDay)} ✕</button>`:'');
+  const list=bkFiltered(), all=bkRead();
+  const q=list.reduce((s,x)=>s+x.qty,0), v=list.reduce((s,x)=>s+x.val,0), days=new Set(list.map(x=>x.day)).size;
+  countUp($('bkK1'),list.length,x=>Math.round(x)); countUp($('bkK2'),q,x=>Math.round(x).toLocaleString('en-IN'));
+  countUp($('bkK3'),v,x=>bkRs(x)); countUp($('bkK4'),days,x=>Math.round(x)); countUp($('bkK5'),days?list.length/days:0,x=>x.toFixed(1));
+  $('bkSub').textContent = `${list.length} of ${all.length} entries`;
+  // 14-day chart
+  const [ra,rb]=bkBounds(bkRangeSel), per={}; all.forEach(x=>{ per[x.day]=(per[x.day]||0)+x.qty; });
+  const today=new Date(); today.setHours(0,0,0,0); const ds=[];
+  for (let i=13;i>=0;i--){ const d=new Date(today); d.setDate(today.getDate()-i); ds.push(d); }
+  const max=Math.max(1,...ds.map(d=>per[dayKey(d)]||0));
+  $('bkChart').innerHTML = ds.map((d,i)=>{ const k=dayKey(d), u=per[k]||0, inR=d>=ra&&d<rb;
+    return `<div class="bk-bar ${inR?'':'out'} ${bkDay===k?'sel':''}" onclick="bkPickDay('${k}')" title="${bkNice(k)} — ${u} units"><b>${u||''}</b><i style="height:${Math.max(3,u/max*88)}%;--i:${i}"></i><span>${d.toLocaleDateString('en-IN',{weekday:'narrow'})} ${d.getDate()}</span></div>`; }).join('');
+  // grouped list
+  const g={}; list.forEach(x=>(g[x.day]=g[x.day]||[]).push(x));
+  const keys=Object.keys(g).sort().reverse(); let n=0;
+  $('bkList').innerHTML = keys.map(k=>{ const es=g[k].sort((a,b)=>b.ts.localeCompare(a.ts)), open=!bkCollapsed.has(k);
+    return `<div class="bk-day"><div class="bk-dayhead" onclick="bkToggle('${k}')"><span>${open?'▾':'▸'} ${bkNice(k)}</span><small>${es.length} PO · ${es.reduce((s,x)=>s+x.qty,0).toLocaleString('en-IN')} units · ${bkRs(es.reduce((s,x)=>s+x.val,0))}</small></div>`
+      + (open?es.map(x=>`<div class="bk-entry" style="--i:${n++}"><span style="color:var(--muted)">${new Date(x.ts).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:false})}</span><span class="bk-pill" style="background:${FAV_COLORS[x.mode]||'#888'}">${esc(CFG[x.mode]?CFG[x.mode].tag:x.mode)}</span><span class="code">${esc(x.po)}</span><span class="num hide-sm">${x.skus||'—'} SKU</span><span class="num">${x.qty}</span><span class="num">${bkRs(x.val)}</span><button class="del-btn" onclick="bkDel('${esc(x.ts+'|'+x.mode+'|'+x.po)}')" title="Remove">✕</button></div>`).join(''):'')+`</div>`; }).join('')
+    || '<div class="bk-empty">📭 Nothing logged for this view yet.<br>Punch a PO (Done &amp; Next, or Copy row) and it shows up here.</div>';
+}
+function bkSummaryText(){
+  const list=bkFiltered(), label=(BK_RANGES.find(r=>r[0]===bkRangeSel)||[])[1]||'';
+  const q=list.reduce((s,x)=>s+x.qty,0), v=list.reduce((s,x)=>s+x.val,0);
+  const by={}; list.forEach(x=>{ const b=by[x.mode]||(by[x.mode]={n:0,q:0,v:0}); b.n++; b.q+=x.qty; b.v+=x.val; });
+  const dd={}; list.forEach(x=>{ const b=dd[x.day]||(dd[x.day]={n:0,q:0,v:0}); b.n++; b.q+=x.qty; b.v+=x.val; });
+  return `📒 PO punch summary — ${label}\nPOs: ${list.length} | Units: ${q.toLocaleString('en-IN')} | Value: ${bkRs(v)}\n\nBy buyer:\n`
+    + Object.entries(by).map(([m,b])=>`• ${CFG[m]?CFG[m].tag:m}: ${b.n} PO, ${b.q} units, ${bkRs(b.v)}`).join('\n')
+    + `\n\nBy day:\n` + Object.keys(dd).sort().map(k=>`• ${bkNice(k)}: ${dd[k].n} PO, ${dd[k].q} units, ${bkRs(dd[k].v)}`).join('\n');
+}
+function bkCopySummary(){ if(!bkFiltered().length){ showToast('Nothing to summarise'); return; } copyText(bkSummaryText()); showToast('📤 Summary copied'); }
+function bkRows(){ return bkFiltered().sort((a,b)=>a.ts.localeCompare(b.ts)).map(x=>{ const d=new Date(x.ts); return [x.day, d.toLocaleTimeString('en-IN',{hour12:false}), CFG[x.mode]?CFG[x.mode].tag:x.mode, x.po, x.skus, x.qty, x.val]; }); }
+function bkCsv(){ const r=bkRows(); if(!r.length) return; const q=s=>`"${String(s).replace(/"/g,'""')}"`;
+  download(new Blob(['Date,Time,Buyer,PO,SKUs,Qty,Value\n'+r.map(x=>x.map(q).join(',')).join('\n')],{type:'text/csv'}),`record_book_${Date.now()}.csv`); }
+function bkXlsx(){
+  const r=bkRows(); if(!r.length) return; if(!window.XLSX){ bkCsv(); return; }
+  const dd={}; r.forEach(x=>{ const b=dd[x[0]]||(dd[x[0]]=[x[0],0,0,0]); b[1]++; b[2]+=x[5]; b[3]+=x[6]; });
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([['Date','Time','Buyer','PO','SKUs','Qty','Value']].concat(r)), 'Log');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([['Date','POs','Units','Value']].concat(Object.values(dd))), 'Daily summary');
+  xlsxSave(wb, `record_book_${Date.now()}.xlsx`); showToast('📥 Excel downloaded');
+}
+function loAllToggle(on){ loSel = new Set(on ? loAll().map(p=>p.po) : []); renderLoBatch(); }
+const loDone = () => { try{ return JSON.parse(localStorage.getItem('po_pur_done')||'[]'); }catch(e){ return []; } };
+function loSetDone(po){ try{ const d=loDone(); if(!d.includes(po)) d.push(po); localStorage.setItem('po_pur_done', JSON.stringify(d)); }catch(e){} }
+function loResetDone(){ try{ localStorage.removeItem('po_pur_done'); }catch(e){} renderLoBatch(); showToast('Done ticks cleared'); }
+let loQ = [], loIdx = 0;
+function loPunch(po, noScroll){
+  const list = loAll().filter(p=>p.po===po); if (!list.length) return;
+  const p = list[0];
+  rows = loRows(list); recomputeDup();
+  lastHeader = { mode:'purplle', fields:[
+    ['PO Number', p.po], ['PO Date', p.date],
+    ['PO total (qty · value)', `${p.qty} pcs · ₹ ${p.val.toLocaleString('en-IN',{minimumFractionDigits:2})}`],
+    ['Buyer','MANASH E-COMMERCE PRIVATE LTD (Purplle)'],
+    ['Payment terms','Entry date + 45 days'],['Delivery window','9:00 AM-3:30 PM (appointment needed)']],
+    wide:[['Delivery location', LO_ADDR], ['Invoice rule','One invoice = one PO. Print MRP on invoice / packing list; write PO no. on every box.']]};
+  showRef(lastHeader); render(true); $('outputCard').style.display='block';
+  if (!noScroll) $('outputCard').scrollIntoView({behavior:'smooth', block:'start'});
+}
+function loBarUpdate(){
+  const bar=$('loBar'); if (!loQ.length){ bar.style.display='none'; return; }
+  const po=loQ[loIdx], p=loAll().find(x=>x.po===po);
+  $('loBarTxt').textContent = `PO ${po} · ${loIdx+1}/${loQ.length}` + (p?` · ${p.qty} pcs`:'') + (loDone().includes(po)?' ✅':'');
+  bar.style.display='flex';
+}
+function loShow(noScroll){ loPunch(loQ[loIdx], noScroll); loBarUpdate(); renderLoBatch(); }
+function loStart(){
+  const sel = loSelected().map(p=>p.po); if (!sel.length){ showToast('Select at least one PO'); return; }
+  const pending = sel.filter(po=>!loDone().includes(po));
+  loQ = sel; loIdx = pending.length ? sel.indexOf(pending[0]) : 0; loShow();
+}
+function loGo(po){
+  const sel = loSelected().map(p=>p.po); loQ = sel.includes(po) ? sel : [po]; loIdx = loQ.indexOf(po); loShow();
+}
+function loNext(){
+  { const bp=loAll().find(x=>x.po===loQ[loIdx]); if (bp) bkLog('purplle',bp.po,bp.qty,bp.val,bp.items.length); }
+  loSetDone(loQ[loIdx]);
+  if (loIdx < loQ.length-1){ loIdx++; loShow(); showToast('✅ Done — next PO loaded'); }
+  else { renderLoBatch(); $('loBarTxt').textContent='🎉 All selected POs punched'; setTimeout(()=>{ loQ=[]; loBarUpdate(); }, 2500); }
+}
+function loPrev(){ if (loIdx>0){ loIdx--; loShow(); } }
+function loStop(){ loQ=[]; loBarUpdate(); }
+function loCopy(){ const rs=loRows(loSelected()); if(rs.length) copyText(rs.map(r=>`${r.sku}\t${r.qty}\t${r.price.toFixed(2)}`).join('\n')); }
+function loXlsx(){
+  if (!window.XLSX){ showToast('Excel library failed to load'); return; }
+  const wb=XLSX.utils.book_new(), sel=loSelected(), map=getFullMapping();
+  const sheet=(rs)=>XLSX.utils.aoa_to_sheet([['SKU','EAN','Product','Qty','Price','Amount']].concat(rs.map(r=>[r.sku,r.code,r.name,r.qty,Number(r.price.toFixed(2)),Number((r.qty*r.price).toFixed(2))])));
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([['PO','Date','Qty','Value (PDF)']].concat(sel.map(p=>[p.po,p.date,p.qty,p.val]))), 'PO Summary');
+  XLSX.utils.book_append_sheet(wb, sheet(loRows(sel)), 'Combined');
+  sel.forEach(p=>XLSX.utils.book_append_sheet(wb, sheet(loRows([p])), 'PO '+p.po.slice(-4)));
+  xlsxSave(wb, `purplle_POs_${Date.now()}.xlsx`); showToast('📥 Excel downloaded');
+}
+function loClearExtra(){ try{ localStorage.removeItem('po_lo_extra'); }catch(e){} loSel=null; renderLoBatch(); showToast('Uploaded POs removed'); }
+async function pdfFullText(file){
+  const pdf = await pdfjsLib.getDocument({data: await file.arrayBuffer()}).promise; let full='';
+  for (let p=1;p<=pdf.numPages;p++){ const c=await (await pdf.getPage(p)).getTextContent(); full += c.items.map(i=>i.str).join(' ')+'\n'; }
+  return full;
+}
+async function handleBatch(files){
+  ps.textContent='Reading '+files.length+' PDFs…'; const ex=loExtra(), notes=[], fp=[]; let added=0;
+  for (const file of files){
+    try{
+      const full=await pdfFullText(file);
+      if (detectMode(full)!=='purplle'){ notes.push(`⚠️ ${esc(file.name)}: not a Purplle PO`); continue; }
+      const its=extractLofoodsItems(full), h=extractLofoodsHeader(full), n=full.replace(/\s+/g,' ');
+      const st=n.match(/\bTotal\s+(\d+)\s+([\d,]+\.\d{2})\s+([\d,]+\.\d{2})\s+([\d,]+\.\d{2})/);
+      const q=its.reduce((s,i)=>s+i.qty,0), a=its.reduce((s,i)=>s+i.amt,0), wantQ=st?toNum(st[1]):q, wantV=st?toNum(st[4]):a;
+      const ok = q===wantQ && Math.abs(a-wantV)<=wantV*0.001+0.5;
+      const po=h.fields[0][1]; if(!po){ notes.push(`⚠️ ${esc(file.name)}: PO number not found`); continue; }
+      const rec={po, date:h.fields[1][1], qty:wantQ, val:wantV, items:its.map(i=>[i.code,i.qty,i.mrp,i.main,i.incl,i.amt])};
+      const k=ex.findIndex(x=>x.po===po); if(k>=0) ex[k]=rec; else ex.push(rec); added++; fp.push(rec);
+      try{ const d=loDeleted().filter(x=>x!==po); localStorage.setItem('po_lo_deleted', JSON.stringify(d)); }catch(e){}
+      notes.push(`${ok?'✔':'⚠'} ${po}: ${q} pcs · ₹${a.toFixed(2)} vs PDF ${wantQ} · ₹${wantV}`);
+    }catch(e){ notes.push(`⚠️ ${esc(file.name)}: could not read`); }
+  }
+  try{ localStorage.setItem('po_lo_extra', JSON.stringify(ex)); }catch(e){}
+  try{ const c=loCfgGet(); fp.forEach(r=>dkEnsure({po:r.po,chan:c.chan||'Purplle',wh:canonOf(c.wh||LO_CFG_DEF.wh,WHS),zone:canonOf(c.zone||LO_CFG_DEF.zone,ZONES),to:c.to||LO_CFG_DEF.to,val:r.val,qty:r.qty})); if(fp.length) dkFocusSet(fp.map(r=>r.po)); }catch(e){}
+  if (mode!=='purplle') setMode('purplle'); loSel=null; renderLoBatch();
+  ps.innerHTML = `Added/updated ${added} PO(s).<br>`+notes.join('<br>');
+  $('loCard').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+try{ const o=localStorage.getItem('po_all_map_lofoods'); if(o && !localStorage.getItem('po_all_map_purplle')) localStorage.setItem('po_all_map_purplle',o); }catch(e){}
+(function init(){
+  let t=''; try{ t = localStorage.getItem('po_all_theme')||''; }catch(e){}
+  applyTheme(t);
+  setMode('reliance');
+  renderHistory();
+  tickClock(); setInterval(tickClock, 1000);
+})();
+</script>
+</body>
+</html>
