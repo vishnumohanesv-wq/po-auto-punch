@@ -1,4 +1,4 @@
-# TUCO PO Punch Converter Pro
+# PO Punch Converter Pro
 
 Turn retail buyer purchase-order PDFs into **punch-ready EasyEcom rows**, **Master Dispatch Tracker rows** and **Purplle ASN files** in seconds. It runs entirely in the browser, with nothing to install.
 
@@ -13,7 +13,24 @@ Turn retail buyer purchase-order PDFs into **punch-ready EasyEcom rows**, **Mast
 
 ---
 
+## Using it for your own company
+
+PO Punch is not tied to one business. Anyone can open the link and use it.
+
+1. On the first visit a **welcome screen** appears. Type your company name, then choose **Try a sample PO**, **Take the 1-minute tour** or **Start using it**.
+2. Open **Sheet & Mapping, Workspace** to set your company name, the tool sub-title, the sign-off used in emails and messages, and your own lists of **zones** and **warehouses**. Your name also becomes the prefix of every file the tool downloads.
+3. Add your SKU mappings once under **Sheet & Mapping**. A code that is not mapped shows as *unmapped* until you do.
+4. Share the link with your team. Everything is stored per browser, so use **Back up** and **Restore** (Sheet & Mapping, Pro tools) to carry settings to another device.
+
+The PDF readers are built for **Purplle, FirstCry, Reliance Retail and Tata 1MG** layouts.
+
+## Help & Guide (built in)
+
+The **Help & Guide** page in the sidebar explains the tool without leaving it: Start here, Buyers, Invoices & ASN, Copy & shortcuts, Looks, Data & privacy and a searchable FAQ. It also has **Try a sample PO**, **Take the tour**, **Copy link to this tool** and **Print this guide**.
+
 ## Forty-one looks
+
+Every look has its own **personality**, not just its own colours. Looks 1 to 15 and 36 to 41 each combine a different menu position (sidebar, top bar, icon rail, right-hand sidebar, floating panel, pill menu, compact sidebar), font pairing, card and button shape, page-header style, entry animation (rise, slide, pop, focus blur, flip, wipe, zoom, drop, swing, glitch, typewriter, bounce), hover effect and background effect. Looks 16 to 35 keep their own layouts and now also have their own animation, hover effect and background. A short screen-wipe animation plays when you switch, and the picker lists each look's menu, font and motion. Animations switch off automatically if your device asks for reduced motion.
 
 Click **Style** in the header (or press **S**) to pick a design. Inside the picker, the arrow keys step through every design, keys **1** to **9** and **0** pick the first ten (use the arrows for the rest), and **Surprise me** picks one at random. Your choice is saved in your browser and is still there after a reload.
 
@@ -61,23 +78,13 @@ Click **Style** in the header (or press **S**) to pick a design. Inside the pick
 | 40 | **Steel & Amber** | Dark | Industrial steel blue with one amber signal colour, square corners |
 | 41 | **Lavender Mist** | Light | Soft lavender surfaces, round shapes, vivid violet |
 
-Looks 1 to 15 change colours and effects. Looks 16 to 35 also change the navigation position, page layout, spacing and the shape of every button, input, table and card. Looks 26 to 35 also bring their own fonts, loaded from Google Fonts. On phones, every look falls back to the bottom navigation bar.
+Looks 16 to 35 change the navigation position, page layout, spacing and the shape of every button, input, table and card. Looks 26 to 35 also bring their own fonts, loaded from Google Fonts. On phones, every look falls back to the bottom navigation bar.
 
 All thirty-five run the same tool, so PO conversion, ASN filling and invoice checks are not affected.
 
 ### Add your own look
 
 Each look is a block of colour variables in the `<style id="skins">`, `<style id="skins2">` or `<style id="skins3">` or `<style id="skins4">` section of `index.html`. Copy one block, rename `data-skin="..."`, change the colours, then add an entry to the `LOOKS` list and the colour list in the first `<script>` in the head.
-
----
-
-## FirstCry rate fix (new)
-
-Some FirstCry POs print a wrong MRP or rate, which later leads to a debit note. In **Convert → 💲 FirstCry rate fix**, enter the **FCID**, the correct **MRP** and the correct **rate incl. GST** (the PO's Landing Rate). The base cost is worked out from the GST % on the PO. **Qty** is optional: leave it empty to keep the PO quantity.
-
-Example: FCID `23840093` (Oat Body Lotion 300ml, SKU 64470). The PO prints MRP 500 and rate 325. The fix gives MRP **375**, rate **243.75** and base cost **206.57**, which match the debit note (375 less 35% margin = 243.75; ÷ 1.18 = 206.57). This fix is saved by default.
-
-The fix applies to every FirstCry PO and to PO vs Invoice compare. The status line shows what was changed and the adjusted PO total, so the qty and amount checks do not give a false warning. Fixes are stored only in your browser.
 
 ---
 
@@ -215,51 +222,6 @@ For portal or login help, contact the Purplle sourcing team at sourcingteam@purp
 
 ---
 
-## Bulk ASN and appointments (Purplle)
-
-For many Purplle POs at once. Open **🟣 Purplle** and use **Bulk ASN + Appointment** under the single ASN filler (the single-PO flow is unchanged and shares the same files).
-
-1. On the Purplle portal, download **Get ASN** (`SKU_Data.xlsx`) for each PO.
-2. Drop **everything at once**: all SKU_Data Excel files, all tax invoice PDFs and, optionally, the Purplle PO PDFs. Files are sorted automatically and matched by PO number.
-3. Read the **checklist**. Each PO shows **READY**, **REVIEW** or **FIX**, with units shipped vs pending, the invoice and a ✓ / ⚠ / ✕ count. Open a PO to see every item: quantity above pending, MRP / rate / HSN differences, GSTIN, invoice dates, invoice arithmetic, short-shipped lines and PO expiry.
-4. Add the **appointment date** (and boxes) per PO, or set one date and slot for all POs.
-5. Click **⬇ Download ASN files (ZIP)** or **⬇ ASN + invoices (ZIP)**. Only ticked POs that are not in the FIX state are included.
-
-**One Excel for all POs (new)**
-
-If you dropped a multi-PO `SKU_Data` sheet, **⬇ ALL POs in ONE Excel** gives you that same sheet with every PO filled (qty shipped, MRP shipped, supplier code, invoice no and ship date from each PO's own invoice). **📤 Share ALL-in-one** sends it through the share menu. Only POs that are ticked and not in the FIX state are included. **⬇ Single ASN per PO (ZIP)** is still there when you want to upload one PO at a time, and the ZIP also contains the all-in-one file.
-
-**What the ZIP contains**
-
-| File | Content |
-|---|---|
-| `TucoKids_Purplle_ASN_ALL_<n>POs_<date>.xlsx` | The original sheet with every PO filled, one file for all POs |
-| `TucoKids_Purplle_ASN_PO…xlsx` | One filled portal Excel per PO, ready for **ASN → Add New → Upload Excel** |
-| `TucoKids_Purplle_Invoice_…pdf` | The invoice for each PO, with a clean file name (only in the ASN + invoices ZIP) |
-| `Checklist.csv` | One line per PO: status, units, invoice value and every note |
-| `Appointments.csv` | PO, invoice, units, value, boxes, date and slot for booking |
-
-**Appointment checks:** the date cannot be in the past or before the invoice date, cannot be after the PO's 30-day expiry, and gets a warning on Sundays. Purplle accepts deliveries from 9:00 AM to 3:30 PM and only with a confirmed appointment, so book each slot after its ASN is uploaded.
-
-**Out of stock for all POs (new):** in the **🚫 Out of stock (all POs)** box type an item name (every word must match, for example `lip tint cherry`) or an EAN, then click **Mark OOS in all POs**. That item gets qty 0 on every PO and every other line ships as per its invoice. Several items can be separated by commas. The list is remembered in your browser and applies to files you load later. Remove an item with ✕.
-
-**Shipping qty accuracy (new):**
-
-- If the PO lists the same EAN on several rows, the invoice quantity is split across those rows in order, capped at each row's pending qty. It is no longer repeated on every row.
-- EANs are matched as digits only, so spaces or `.0` do not break the match.
-- PO numbers printed with a trailing `_` or `-` on the invoice are cleaned before matching.
-- If the main invoice reader misses a line, a backup reader looks for it and marks it ⚠ to confirm. An EAN on the invoice that still cannot be read is shown in red.
-- Red check if the invoice's own total qty differs from the lines read.
-- Check that the ASN shipping qty equals the invoice qty (minus any out-of-stock units).
-
-**Files with many POs:** a SKU_Data Excel that contains several POs is split automatically, so every PO becomes its own ASN with only its own lines. Each invoice is matched to its PO and the quantities come from the invoice.
-
-**When something is red:** open the PO's checklist row. **Edit by hand** shows every line with errors or warnings and lets you change *Qty to ship* and *Supplier code*; **Edit every line** opens the full list. **Cap qty at pending** and **Set error lines to 0 (skip)** fix the common cases in one click. A red item that is only about the invoice (for example a GSTIN or arithmetic difference you have checked) can be **included anyway** by ticking the PO's box. Red line errors must be edited first, because the portal would reject them. **⬇ ASN** on a row downloads just that PO.
-
-**Missing pieces are called out:** an invoice with no SKU_Data file, and a SKU_Data file with no invoice, are listed above the table. **📋 Copy checklist** and **📅 Copy appointment list** paste straight into Excel or WhatsApp.
-
----
-
 ## All features
 
 - PDF reading for multiple buyers, with auto-detection
@@ -268,8 +230,6 @@ If you dropped a multi-PO `SKU_Data` sheet, **⬇ ALL POs in ONE Excel** gives y
 - One-row Master Dispatch Tracker output with exact zone and warehouse names
 - Purplle batch mode: many POs, punched one at a time
 - **Purplle ASN filler** (see above)
-- **Bulk ASN + appointments for many Purplle POs**, including **one Excel for all POs** and an **out-of-stock list** (see above)
-- **FirstCry rate fix** per FCID (see above)
 - Searchable, hideable history with one-click copy of master rows
 - Daily Record Book with summary and CSV / Excel export
 - Optional: send rows straight to a Google Sheet through Apps Script
