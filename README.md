@@ -2,7 +2,7 @@
 
 Turn retail buyer purchase-order PDFs into **punch-ready EasyEcom rows**, **Master Dispatch Tracker rows** and **Purplle ASN files** in seconds. It runs entirely in the browser, with nothing to install.
 
-**Live tool:** https://vishnumohanesv-wq.github.io/tuco-po-punch/
+**Live tool:** https://vishnumohanesv-wq.github.io/po-auto-punch/
 
 | Buyer | PO PDF → EasyEcom rows | Master sheet row | ASN file |
 |---|:---:|:---:|:---:|
