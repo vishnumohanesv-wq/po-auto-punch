@@ -6,7 +6,7 @@
 
 Runs fully in your browser. Nothing to install. Nothing uploaded.
 
-[![Open the tool](https://img.shields.io/badge/▶_Open_the_tool-6B3FD0?style=for-the-badge)](https://vishnumohanesv-wq.github.io/tuco-po-punch/)
+[![Open the tool](https://img.shields.io/badge/▶_Open_the_tool-6B3FD0?style=for-the-badge)](https://vishnumohanesv-wq.github.io/po-auto-punch/)
 ![Buyers](https://img.shields.io/badge/Buyers-5-8F7CFF?style=flat-square)
 ![Formats](https://img.shields.io/badge/PO_formats-PDF_·_Excel_·_ZIP-43E0FF?style=flat-square)
 ![Looks](https://img.shields.io/badge/Looks-42-FF7AB8?style=flat-square)
