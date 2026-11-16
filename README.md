@@ -2,6 +2,8 @@
 
 Single file: `index.html`. Open it in a browser or put it on GitHub Pages (repo `po-auto-punch`, replace `index.html`). Data stays in your browser. Keep `ORIGINAL_BACKUP_v2.0.html` as your rollback.
 
+https://vishnumohanesv-wq.github.io/po-auto-punch/
+
 ## Upgrade steps
 1. Settings → Backup: download a backup first (the app also makes an automatic copy on first open).
 2. Replace `index.html` on GitHub, wait a minute, hard refresh (Ctrl+Shift+R).
