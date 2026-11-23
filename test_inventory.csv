@@ -1,0 +1,5 @@
+Category,Brand,description,name,"Model No",mrp,sku,restocking_setting_name,old_quantity,new_quantity,productType
+"Test",,,"Shampoo 300ml",`64474,450,`64474,,,,
+"Test",,,"Facewash 100ml",`64531,250,`64531,,,,
+"Test",,,"Toothpaste 50gm",`64561,180,`64561,,,,
+"Test",,,"Tint 10gm",`64511,300,`64511,,,,

@@ -1,0 +1,7 @@
+node_modules/
+__pycache__/
+*.pyc
+*_PO_Punch_backup_*.json
+.env
+.env.*
+!.env.example
